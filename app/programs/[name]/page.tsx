@@ -26,6 +26,7 @@ const CratePage = () => {
             fetch(`/api/crates/${name}`, {
                 method: 'GET', // 明确指定使用 GET 方法
             })
+
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
