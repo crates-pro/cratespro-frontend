@@ -139,7 +139,7 @@ const DependencyGraph: React.FC<{ dependencies: Dependency[] }> = ({ dependencie
     }, [dependencies]);
 
     return (
-        <div className="bg-white p-3 mb-8 shadow-lg rounded-lg">
+        <div className="bg-white p-4 mb-2 shadow-lg rounded-lg">
             <div ref={d3Container} style={{ width: '100%', height: '400px' }} />
         </div>
     );

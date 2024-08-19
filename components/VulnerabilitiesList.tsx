@@ -6,8 +6,8 @@ export interface Vulnerability {
 }
 
 const VulnerabilitiesList = ({ vulnerabilities }: { vulnerabilities: Vulnerability[] }) => (
-    <section className="bg-white p-6 mb-2 shadow-lg rounded-lg">
-        <h2 className="text-3xl font-semibold mb-2 text-gray-800">Vulnerabilities</h2>
+    <section className="bg-white p-4 mb-2 shadow-lg rounded-lg">
+        <h2 className="text-xl font-semibold mb-2 text-gray-800">Vulnerabilities</h2>
         {vulnerabilities.length > 0 ? (
             <ul className="space-y-6">
                 {vulnerabilities.map(vul => (
@@ -21,7 +21,7 @@ const VulnerabilitiesList = ({ vulnerabilities }: { vulnerabilities: Vulnerabili
                 ))}
             </ul>
         ) : (
-            <p className="text-gray-500 text-lg">No vulnerabilities found.</p>
+            <p className="text-gray-500">No vulnerabilities found.</p>
         )}
     </section>
 );

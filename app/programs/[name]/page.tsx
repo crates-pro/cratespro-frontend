@@ -5,21 +5,21 @@ import { useParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import CrateInfoCard, { CrateInfo } from '../../../components/CrateInfoCard';
-import MaintainersList from '../../../components/MaintainersList';
 import DependenciesList, { Dependency } from '../../../components/DependenciesList';
 import DependencyGraph from '../../../components/DependencyGraph';
 import VulnerabilitiesList, { Vulnerability } from '../../../components/VulnerabilitiesList';
 import SecurityAdvisories from '../../../components/SecurityAdvisories';
 import LicensesInfo from '../../../components/LicensesInfo';
 import MetadataSection from '@/components/MetadataSection';
-
+import BenchmarkResults from '../../../components/BenchmarkResults';
 import VersionsSelector from '../../../components/VersionsSelector';
 
 const CratePage = () => {
     const [crateInfo, setCrateInfo] = useState<CrateInfo | null>(null);
+    const [versions, setVersions] = useState<string[]>([]);
     const [dependencies, setDependencies] = useState<Dependency[]>([]);
     const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
-    const [versions, setVersions] = useState<string[]>([]);
+    const [benchmarks, setBenchmarks] = useState<{ name: string; value: string }[]>([]);
     const { name } = useParams();
     const router = useRouter();
 
@@ -29,9 +29,6 @@ const CratePage = () => {
                 method: 'GET',
             })
             .then(response => {
-                if (!response.ok) {
-                    //throw new Error(`HTTP error! status: ${response.status}`);
-                }
                 return response.json(); 
             })
             .then(data=>{
@@ -39,6 +36,7 @@ const CratePage = () => {
                 setDependencies(data.dependencies || []);
                 setVulnerabilities(data.vulnerabilities || []);
                 setVersions(data.versions || []);
+                setBenchmarks(data.benchmarks || []);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -51,23 +49,20 @@ const CratePage = () => {
     }
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex h-full flex-col px-3 py-1 md:px-1">
             <Header onBack={() => router.back()} />
             <main className="flex-grow overflow-y-auto bg-gray-100">
-                <div className="container mx-auto p-4 flex">
+                <div className="container mx-auto p-2 flex">
                     <div className="w-full md:w-2/3 pr-2">                        
                         <CrateInfoCard crateInfo={crateInfo} />
-                        <MaintainersList maintainers={crateInfo?.maintainers || []} />
-                        <SecurityAdvisories vulnerabilities={vulnerabilities} />
                         <LicensesInfo licenses={crateInfo.licenses} dependencyLicenses={crateInfo.dependencyLicenses} />
-                        <MetadataSection
-                            publishedDate={crateInfo.publishedDate}
-                            description={crateInfo.description}
-                            links={crateInfo.links}
-                        />
+                        <MetadataSection publishedDate={crateInfo.publishedDate} description={crateInfo.description} links={crateInfo.links} />
+                        <SecurityAdvisories vulnerabilities={vulnerabilities} />
+                        <BenchmarkResults benchmarks={benchmarks} />
+
                     </div>
                     <div className="w-full md:w-1/3 pl-2 border-l-2">
-                        <VersionsSelector versions={versions} currentVersion={crateInfo.version} crateName={crateInfo.name} />
+                        <VersionsSelector versions={versions} currentVersion={versions[versions.length-1]} crateName={crateInfo.name} />
                         <VulnerabilitiesList vulnerabilities={vulnerabilities} />
                         <DependenciesList dependencies={dependencies} />
                         <DependencyGraph dependencies={dependencies} />
@@ -76,6 +71,7 @@ const CratePage = () => {
             </main>
             <Footer />
         </div>
+        
     );
 };
 

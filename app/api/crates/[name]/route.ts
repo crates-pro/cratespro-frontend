@@ -1,77 +1,49 @@
-// /home/rust/workspace/next-learn/dashboard/starter-example/app/api/crates/[name]/route.ts
-
+// /home/rust/workspace/cratespro-frontend/app/api/crates/[name]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../lib/db';
-interface CrateInfo {
-    name: string;
-    versions: string[];
-    description: string;
-    repository: string;
-    downloads: number;
-    maintainers: Maintainer[];
-    documentation: string;
-    publishedDate: string;
-    licenses: string[];
-    dependencyLicenses: Record<string, number>;
-    links: Record<string, string>;
-    dependencies: Dependency[];
-    vulnerabilities: Vulnerability[];
-}
-
-interface Maintainer {
-    name: string;
-    email: string;
-}
-
-interface Dependency {
-    name: string;
-    version: string;
-}
-
-interface Vulnerability {
-    id: string;
-    title: string;
-    description: string;
-    severity: string;
-}
-
-
 
 export async function GET(req: NextRequest, { params }: { params: { name: string } }) {
-    const { name } = params;
-  
-    try {
-      const client = await pool.connect();
-      const res = await client.query(
-        'SELECT * FROM crates WHERE name = \$1',
-        [name]
-      );
+  const { name } = params;
+
+  try {
+    const client = await pool.connect();
+
+    // Fetch program info by name
+    const programRes = await client.query(
+      'SELECT * FROM programs WHERE name = \$1',
+      [name]
+    );
+
+    if (programRes.rows.length === 0) {
       client.release();
-  
-      if (res.rows.length === 0) {
-        return NextResponse.json({ error: 'Crate not found' }, { status: 404 });
-      }
-  
-      const crate = res.rows[0];
-      const crateInfo: CrateInfo = {
-        name: crate.name,
-        versions: crate.versions,
-        description: crate.description,
-        repository: crate.repository,
-        downloads: crate.downloads,
-        maintainers: JSON.parse(crate.maintainers),
-        documentation: crate.documentation,
-        publishedDate: crate.published_date,
-        licenses: crate.licenses.split(','),
-        dependencyLicenses: JSON.parse(crate.dependency_licenses),
-        links: JSON.parse(crate.links),
-        dependencies: JSON.parse(crate.dependencies),
-        vulnerabilities: JSON.parse(crate.vulnerabilities),
-      };
-  
-      return NextResponse.json(crateInfo);
-    } catch (error) {
-      console.error('Database query error:', error);
-      return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+      return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
+
+    const programInfo = programRes.rows[0];
+
+    client.release();
+
+    return NextResponse.json({
+      crateInfo: {
+        id: programInfo.id,
+        name: programInfo.name,
+        description: programInfo.description,
+        namespace: programInfo.namespace,
+        maxVersion: programInfo.max_version,
+        githubUrl: programInfo.github_url,
+        megaUrl: programInfo.mega_url,
+        docUrl: programInfo.doc_url,
+        programType: programInfo.program_type,
+        downloads: programInfo.downloads,
+        cratesio: programInfo.cratesio,
+      },
+      dependencies: [], // 如果有依赖关系，可以在这里添加查询逻辑
+      vulnerabilities: [], // 如果有漏洞信息，可以在这里添加查询逻辑
+      versions: [], // 如果有版本信息，可以在这里添加查询逻辑
+      benchmarks: [], // 如果有基准测试信息，可以在这里添加查询逻辑
+    });
+  } catch (error) {
+    console.error('Database query error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
