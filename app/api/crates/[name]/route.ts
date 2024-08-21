@@ -1,4 +1,3 @@
-// /home/rust/workspace/cratespro-frontend/app/api/crates/[name]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 
@@ -21,6 +20,14 @@ export async function GET(req: NextRequest, { params }: { params: { name: string
 
     const programInfo = programRes.rows[0];
 
+    // Fetch versions from program_versions table
+    const versionsRes = await client.query(
+      'SELECT version FROM program_versions WHERE name = \$1',
+      [name]
+    );
+
+    const versions = versionsRes.rows.map((row: any) => row.version);
+
     client.release();
 
     return NextResponse.json({
@@ -39,7 +46,7 @@ export async function GET(req: NextRequest, { params }: { params: { name: string
       },
       dependencies: [], // 如果有依赖关系，可以在这里添加查询逻辑
       vulnerabilities: [], // 如果有漏洞信息，可以在这里添加查询逻辑
-      versions: [], // 如果有版本信息，可以在这里添加查询逻辑
+      versions: versions, // 添加版本信息
       benchmarks: [], // 如果有基准测试信息，可以在这里添加查询逻辑
     });
   } catch (error) {
@@ -47,3 +54,4 @@ export async function GET(req: NextRequest, { params }: { params: { name: string
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+

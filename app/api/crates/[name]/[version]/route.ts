@@ -3,68 +3,52 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
 
 interface CrateVersionInfo {
-    name: string;
-    version: string;
-    description: string;
-    repository: string;
-    downloads: number;
-    maintainers: Maintainer[];
-    documentation: string;
-    publishedDate: string;
-    licenses: string[];
-    dependencyLicenses: Record<string, number>;
-    links: Record<string, string>;
-    dependencies: Dependency[];
-    vulnerabilities: Vulnerability[];
-}
-
-interface Maintainer {
-    name: string;
-    email: string;
+  name: string;
+  version: string;
+  documentation: string;
+  dependencies: Dependency[];
 }
 
 interface Dependency {
-    name: string;
-    version: string;
+  name: string;
+  version: string;
 }
-
-interface Vulnerability {
-    id: string;
-    title: string;
-    description: string;
-    severity: string;
-}
-
 export async function GET(req: NextRequest, { params }: { params: { name: string, version: string } }) {
   const { name, version } = params;
+  const nameAndVersion = `${name}/${version}`;
 
   try {
     const client = await pool.connect();
-    const res = await client.query(
-      'SELECT * FROM crates WHERE name = \$1 AND version = \$2',
-      [name, version]
+
+    // 查询 program_versions 表
+    const versionRes = await client.query(
+      'SELECT * FROM program_versions WHERE name_and_version = \$1',
+      [nameAndVersion]
     );
+
+    // 查询 program_dependencies 表
+    const dependenciesRes = await client.query(
+      'SELECT dependency_name, dependency_version FROM program_dependencies WHERE name_and_version = \$1',
+      [nameAndVersion]
+    );
+
     client.release();
 
-    if (res.rows.length === 0) {
+    if (versionRes.rows.length === 0) {
       return NextResponse.json({ error: 'Crate not found' }, { status: 404 });
     }
 
-    const crate = res.rows[0];
+    const versionInfo = versionRes.rows[0];
+    const dependencies = dependenciesRes.rows.map((row: any) => ({
+      name: row.dependency_name,
+      version: row.dependency_version,
+    }));
+
     const crateVersionInfo: CrateVersionInfo = {
-      name: crate.name,
-      version: crate.version,
-      description: crate.description,
-      repository: crate.repository,
-      downloads: crate.downloads,
-      maintainers: JSON.parse(crate.maintainers),
-      documentation: crate.documentation,
-      publishedDate: crate.published_date,
-      licenses: crate.licenses.split(','),
-      dependencyLicenses: JSON.parse(crate.dependency_licenses),
-      links: JSON.parse(crate.links),
-      dependencies: JSON.parse(crate.dependencies),
-      vulnerabilities: JSON.parse(crate.vulnerabilities),
+      name: versionInfo.name,
+      version: versionInfo.version,
+      documentation: versionInfo.documentation,
+      dependencies: dependencies,
     };
 
     return NextResponse.json(crateVersionInfo);
