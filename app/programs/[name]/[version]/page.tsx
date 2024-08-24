@@ -15,6 +15,23 @@ import BenchmarkResults from '../../../../components/BenchmarkResults';
 import VersionsSelector from '../../../../components/VersionsSelector';
 
 
+async function fetchDependencyTree(name: string, version: string) {
+    const response = await fetch(`/api/crates/${name}/${version}`);
+    const versionData = await response.json();
+    
+    const dependencies = versionData.dependencies || [];
+    
+    const dependenciesDetails = await Promise.all(dependencies.map(async (subDep: { name: string; version: string; }) => {
+        return fetchDependencyTree(subDep.name, subDep.version);
+    }));
+
+    return {
+        name,
+        version,
+        dependencies: dependenciesDetails
+    };
+}
+
 
 
 const CratePage = () => {
@@ -50,27 +67,20 @@ const CratePage = () => {
  
 
     useEffect(() => {
-        fetch(`/api/crates/${name}/${version}`)
-        .then(response => response.json())
-        .then(versionData => {
-            setDependencies(versionData.dependencies || []);
-      
-            const graphDep: GraphDependency = {
-                name: crateName, // 从 dep 中获取 name
-                version: currentVersion, // 从 dep 中获取 version
-                dependencies: versionData.dependencies ? versionData.dependencies.map((subDep: any) => ({
-                  name: subDep.name,
-                  version: subDep.version,
-                  dependencies: subDep.dependencies || []
-                })) : []
-              };
-
-            console.log(graphDep);
-            setGraphDependencies(graphDep);
-        });
-      
-
-    }, [crateName, currentVersion]);  
+        async function loadDependencies() {
+            try {
+                const graphDep = await fetchDependencyTree(crateName, currentVersion);
+                console.log(graphDep);
+                setGraphDependencies(graphDep);
+            } catch (error) {
+                console.error('Error fetching dependency tree:', error);
+            }
+        }
+    
+        if (crateName && currentVersion) {
+            loadDependencies();
+        }
+    }, [crateName, currentVersion]);
 
     const handleVersionChange = (version: string) => {
         console.log(`Navigating to /programs/${name}/${version}`);
@@ -106,7 +116,7 @@ const CratePage = () => {
                         />
                         <VulnerabilitiesList vulnerabilities={vulnerabilities} />
                         <DependenciesList dependencies={dependencies} onDependencyClick={handleDependencyClick} />
-                        <DependencyGraph dependencies={graphDependencies || { name: '', version: '', dependencies: [] }} />
+                        <DependencyGraph crateName={name} currentVersion={version} dependencies={graphDependencies} />
                     </div>
                 </div>
             </main>

@@ -44,10 +44,8 @@ export async function GET(req: NextRequest, { params }: { params: { name: string
         downloads: programInfo.downloads,
         cratesio: programInfo.cratesio,
       },
-      dependencies: [], // 如果有依赖关系，可以在这里添加查询逻辑
-      vulnerabilities: [], // 如果有漏洞信息，可以在这里添加查询逻辑
       versions: versions, // 添加版本信息
-      benchmarks: [], // 如果有基准测试信息，可以在这里添加查询逻辑
+      vulnerabilities: [], // 如果有漏洞信息，可以在这里添加查询逻辑
     });
   } catch (error) {
     console.error('Database query error:', error);
