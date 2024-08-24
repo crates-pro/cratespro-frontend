@@ -6,7 +6,7 @@ import Header from '../../../../components/Header';
 import Footer from '../../../../components/Footer';
 import CrateInfoCard, { CrateInfo } from '../../../../components/CrateInfoCard';
 import DependenciesList, { Dependency } from '../../../../components/DependenciesList';
-import DependencyGraph from '../../../../components/DependencyGraph';
+import DependencyGraph, {GraphDependency} from '../../../../components/DependencyGraph';
 import VulnerabilitiesList, { Vulnerability } from '../../../../components/VulnerabilitiesList';
 import SecurityAdvisories from '../../../../components/SecurityAdvisories';
 import LicensesInfo from '../../../../components/LicensesInfo';
@@ -14,53 +14,63 @@ import MetadataSection from '@/components/MetadataSection';
 import BenchmarkResults from '../../../../components/BenchmarkResults';
 import VersionsSelector from '../../../../components/VersionsSelector';
 
+
+
+
 const CratePage = () => {
     const router = useRouter();
     const [crateInfo, setCrateInfo] = useState<CrateInfo | null>(null);
     const [versions, setVersions] = useState<string[]>([]);
-    const [currentVersion, setCurrentVersion] = useState<string>('');
     const [dependencies, setDependencies] = useState<Dependency[]>([]);
+    const [graphDependencies, setGraphDependencies] = useState<GraphDependency>();
     const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
     const [benchmarks, setBenchmarks] = useState<{ name: string; value: string }[]>([]);
-    const { name, version } = useParams();
+    const { name, version } = useParams<{ name: string; version: string }>();
+
+
+    const crateName = Array.isArray(name) ? name[0] : name;
+    const currentVersion = Array.isArray(version) ? version[0] : version;
+
 
     useEffect(() => {
-        if (name) {
-            fetch(`/api/crates/${name}`)
-                .then(response => response.json())
-                .then(data => {
-                    setCrateInfo(data.crateInfo || {});
-                    setVersions(data.versions || []);
-                    setVulnerabilities(data.vulnerabilities || []);
-                    setBenchmarks(data.benchmarks || []);
+       
+        fetch(`/api/crates/${crateName}`)
+            .then(response => response.json())
+            .then(data => {
+                setCrateInfo(data.crateInfo || {});
+                setVersions(data.versions || []);
+                setVulnerabilities(data.vulnerabilities || []);
+                setBenchmarks(data.benchmarks || []);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     
-                    // Ensure version is a string
-                    const versionParam = Array.isArray(version) ? version[0] : version;
-    
-                    // Only set the current version if a version is provided in the URL
-                    if (versionParam && data.versions.includes(versionParam)) {
-                        setCurrentVersion(versionParam);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        }
-    }, [name, version]);
-    
+    }, [crateName, currentVersion]);
+ 
 
     useEffect(() => {
-        if (name && currentVersion) {
-            fetch(`/api/crates/${name}/${currentVersion}`)
-                .then(response => response.json())
-                .then(versionData => {
-                    setDependencies(versionData.dependencies || []);
-                })
-                .catch(error => {
-                    console.error('Error fetching version data:', error);
-                });
-        }
-    }, [name, currentVersion]);
+        fetch(`/api/crates/${name}/${version}`)
+        .then(response => response.json())
+        .then(versionData => {
+            setDependencies(versionData.dependencies || []);
+      
+            const graphDep: GraphDependency = {
+                name: crateName, // 从 dep 中获取 name
+                version: currentVersion, // 从 dep 中获取 version
+                dependencies: versionData.dependencies ? versionData.dependencies.map((subDep: any) => ({
+                  name: subDep.name,
+                  version: subDep.version,
+                  dependencies: subDep.dependencies || []
+                })) : []
+              };
+
+            console.log(graphDep);
+            setGraphDependencies(graphDep);
+        });
+      
+
+    }, [crateName, currentVersion]);  
 
     const handleVersionChange = (version: string) => {
         console.log(`Navigating to /programs/${name}/${version}`);
@@ -90,13 +100,13 @@ const CratePage = () => {
                     <div className="w-full md:w-1/3 pl-2 border-l-2">
                         <VersionsSelector
                             versions={versions}
-                            currentVersion={currentVersion}
+                            currentVersion={version}
                             crateName={crateInfo.name}
                             onVersionChange={handleVersionChange}
                         />
                         <VulnerabilitiesList vulnerabilities={vulnerabilities} />
                         <DependenciesList dependencies={dependencies} onDependencyClick={handleDependencyClick} />
-                        <DependencyGraph dependencies={dependencies} />
+                        <DependencyGraph dependencies={graphDependencies || { name: '', version: '', dependencies: [] }} />
                     </div>
                 </div>
             </main>
