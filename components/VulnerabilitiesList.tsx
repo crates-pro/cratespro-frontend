@@ -7,14 +7,14 @@ export interface Vulnerability {
 
 const VulnerabilitiesList = ({ vulnerabilities }: { vulnerabilities: Vulnerability[] }) => (
     <section className="bg-white p-4 mb-2 shadow-lg rounded-lg">
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">Vulnerabilities</h2>
+        <h2 className="text-xl font-bold mb-2">Vulnerabilities</h2>
         {vulnerabilities.length > 0 ? (
-            <ul className="space-y-6">
+            <ul className="grid grid-cols-1 md:grid-cols-4 gap-2">
                 {vulnerabilities.map(vul => (
-                    <li key={vul.id} className="p-6 bg-gray-50 rounded-lg shadow-md border border-gray-200">
-                        <h3 className="text-2xl font-bold mb-2 text-gray-800">{vul.title}</h3>
-                        <p className="text-gray-700 mb-4">{vul.description}</p>
-                        <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${getSeverityColor(vul.severity)}`}>
+                    <li key={vul.id} className="p-4 bg-gray-50 rounded-md shadow-sm border border-gray-200">
+                        <h3 className="text-x font-bold mb-1 text-gray-800">{vul.title}</h3>
+                        <p className="text-gray-600 text-xs mb-2">{vul.description}</p>
+                        <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${getSeverityColor(vul.severity)}`}>
                             {vul.severity}
                         </span>
                     </li>

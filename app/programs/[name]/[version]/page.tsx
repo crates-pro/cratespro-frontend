@@ -4,15 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '../../../../components/Header';
 import Footer from '../../../../components/Footer';
-import CrateInfoCard, { CrateInfo } from '../../../../components/CrateInfoCard';
+import CrateInfoCard from '../../../../components/CrateInfoCard';
 import DependenciesList, { Dependency } from '../../../../components/DependenciesList';
 import DependencyGraph, {GraphDependency} from '../../../../components/DependencyGraph';
 import VulnerabilitiesList, { Vulnerability } from '../../../../components/VulnerabilitiesList';
 import SecurityAdvisories from '../../../../components/SecurityAdvisories';
-import LicensesInfo from '../../../../components/LicensesInfo';
-import MetadataSection from '@/components/MetadataSection';
 import BenchmarkResults from '../../../../components/BenchmarkResults';
 import VersionsSelector from '../../../../components/VersionsSelector';
+import { CrateInfo } from '@/app/lib/crate_info';
 
 
 async function fetchDependencyTree(name: string, version: string) {
@@ -56,7 +55,7 @@ const CratePage = () => {
             .then(data => {
                 setCrateInfo(data.crateInfo || {});
                 setVersions(data.versions || []);
-                setVulnerabilities(data.vulnerabilities || []);
+            
                 setBenchmarks(data.benchmarks || []);
             })
             .catch(error => {
@@ -65,6 +64,20 @@ const CratePage = () => {
     
     }, [crateName, currentVersion]);
  
+    useEffect(()=>{
+        fetch(`/api/crates/${name}/${version}`)
+        .then(response => response.json())
+        .then(data => {
+            setVulnerabilities(data.vulnerabilities);
+            setDependencies(data.dependencies);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+
+
+    }, [crateName, currentVersion]);
+
 
     useEffect(() => {
         async function loadDependencies() {
@@ -102,9 +115,8 @@ const CratePage = () => {
                 <div className="container mx-auto p-2 flex">
                     <div className="w-full md:w-2/3 pr-2">                        
                         <CrateInfoCard crateInfo={crateInfo} />
-                        <LicensesInfo licenses={crateInfo.licenses} dependencyLicenses={crateInfo.dependencyLicenses} />
-                        <MetadataSection publishedDate={crateInfo.publishedDate} description={crateInfo.description} links={crateInfo.links} />
                         <SecurityAdvisories vulnerabilities={vulnerabilities} />
+                        <VulnerabilitiesList vulnerabilities={vulnerabilities} />
                         <BenchmarkResults benchmarks={benchmarks} />
                     </div>
                     <div className="w-full md:w-1/3 pl-2 border-l-2">
@@ -114,7 +126,7 @@ const CratePage = () => {
                             crateName={crateInfo.name}
                             onVersionChange={handleVersionChange}
                         />
-                        <VulnerabilitiesList vulnerabilities={vulnerabilities} />
+                        
                         <DependenciesList dependencies={dependencies} onDependencyClick={handleDependencyClick} />
                         <DependencyGraph crateName={name} currentVersion={version} dependencies={graphDependencies} />
                     </div>
