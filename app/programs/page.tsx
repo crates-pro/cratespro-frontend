@@ -2,12 +2,14 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+//接口定义-Rust程序的结构
 interface ObjectData {
   name: string;
   description: string;
   category: string;
 }
 
+//接口定义-描述CVE数据的结构
 interface CVE {
   id: string;
   description: string;
@@ -16,15 +18,24 @@ interface CVE {
 }
 
 const ProgramsPage = () => {
-  const [objects, setObjects] = useState<ObjectData[]>([]);
-  const [cveData, setCveData] = useState<CVE[]>([]);
+  const [objects, setObjects] = useState<ObjectData[]>([]); //从接口获取Rust程序数据
+  const [cveData, setCveData] = useState<CVE[]>([]); //从接口获取CVE数据
 
+  //获取数据
   useEffect(() => {
-    fetch('/api/crates')
+    fetch('/api/crates') //这里应调用后端接口：GET http://localhost:6888/api/crates  （？）
       .then(response => response.json())
-      .then(data => setObjects(data));
+      .then(data => {
+        console.log('Fetched crates data:', data); //调试输出
+        if (Array.isArray(data)) {
+          setObjects(data);
+        } else {
+          console.error('Crates data is not an array:', data);
+          setObjects([]);//如果不是数组，设置为空数组
+        }
+      });
 
-      fetch('/api/cves')
+    fetch('/api/cves') //这里应调用后端接口： GET http://localhost:6888/api/crates/{name} （？）
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,7 +80,7 @@ const ProgramsPage = () => {
           <h1 className="text-3xl font-bold mb-4">CVE List</h1>
           <ul className="grid grid-cols-1 gap-4">
             {cveData.map((cve) => (
-              <li key={cve.id} className="bg-white shadow-md rounded-lg p-4 transition-transform transform hover:scale-105">
+              <li key={cve.id} className="bg-white shadow-md rounded-lg p-4 transition-transform transform hover:scale-105">{/* 这里transform hover:scale-105和submit弹窗有冲突 */}
                 <Link href={`programs/cves/${cve.id}`} className="text-xl font-bold text-blue-500 hover:text-blue-600">
                   {cve.id}
                 </Link>

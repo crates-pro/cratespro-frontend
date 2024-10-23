@@ -6,20 +6,20 @@ import Header from '../../../../components/Header';
 import Footer from '../../../../components/Footer';
 import CrateInfoCard from '../../../../components/CrateInfoCard';
 import DependenciesList, { Dependency } from '../../../../components/DependenciesList';
-import DependencyGraph, {GraphDependency} from '../../../../components/DependencyGraph';
+import DependencyGraph, { GraphDependency } from '../../../../components/DependencyGraph';
 import VulnerabilitiesList, { Vulnerability } from '../../../../components/VulnerabilitiesList';
 import SecurityAdvisories from '../../../../components/SecurityAdvisories';
 import BenchmarkResults from '../../../../components/BenchmarkResults';
 import VersionsSelector from '../../../../components/VersionsSelector';
 import { CrateInfo } from '@/app/lib/crate_info';
 
-
+//异步获取依赖树
 async function fetchDependencyTree(name: string, version: string) {
     const response = await fetch(`/api/crates/${name}/${version}`);
     const versionData = await response.json();
-    
+
     const dependencies = versionData.dependencies || [];
-    
+
     const dependenciesDetails = await Promise.all(dependencies.map(async (subDep: { name: string; version: string; }) => {
         return fetchDependencyTree(subDep.name, subDep.version);
     }));
@@ -49,31 +49,31 @@ const CratePage = () => {
 
 
     useEffect(() => {
-       
+
         fetch(`/api/crates/${crateName}`)
             .then(response => response.json())
             .then(data => {
                 setCrateInfo(data.crateInfo || {});
                 setVersions(data.versions || []);
-            
+
                 setBenchmarks(data.benchmarks || []);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    
+
     }, [crateName, currentVersion]);
- 
-    useEffect(()=>{
+
+    useEffect(() => {
         fetch(`/api/crates/${name}/${version}`)
-        .then(response => response.json())
-        .then(data => {
-            setVulnerabilities(data.vulnerabilities);
-            setDependencies(data.dependencies);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                setVulnerabilities(data.vulnerabilities);
+                setDependencies(data.dependencies);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
 
 
     }, [crateName, currentVersion]);
@@ -89,7 +89,7 @@ const CratePage = () => {
                 console.error('Error fetching dependency tree:', error);
             }
         }
-    
+
         if (crateName && currentVersion) {
             loadDependencies();
         }
@@ -113,7 +113,7 @@ const CratePage = () => {
             <Header onBack={() => window.history.back()} />
             <main className="flex-grow overflow-y-auto bg-gray-100">
                 <div className="container mx-auto p-2 flex">
-                    <div className="w-full md:w-2/3 pr-2">                        
+                    <div className="w-full md:w-2/3 pr-2">
                         <CrateInfoCard crateInfo={crateInfo} />
                         <SecurityAdvisories vulnerabilities={vulnerabilities} />
                         <VulnerabilitiesList vulnerabilities={vulnerabilities} />
@@ -126,7 +126,7 @@ const CratePage = () => {
                             crateName={crateInfo.name}
                             onVersionChange={handleVersionChange}
                         />
-                        
+
                         <DependenciesList dependencies={dependencies} onDependencyClick={handleDependencyClick} />
                         <DependencyGraph crateName={name} currentVersion={version} dependencies={graphDependencies} />
                     </div>
