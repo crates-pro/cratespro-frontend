@@ -10,6 +10,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import React from 'react';
+import { message } from 'antd';
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
@@ -46,21 +48,23 @@ export default function NavLinks() {
       //用fetch向服务器发声POST请求，提交用户输入的内容
       const response = await fetch('/api/submi', {  // 待替换为服务器API
         method: 'POST',
-        //请求体，将对象转换为json字符串
+        //请求体
         body: formData,
       });
       //响应处理，根据响应结果显示提示信息，并重置输入框或关闭弹窗
       if (response.ok) {
-        alert('内容提交成功！');//提交成功后重置输入框的值，并关闭弹窗
+        message.success('提交成功');//提交成功后重置输入框的值，并关闭弹窗
+        console.log('提交成功');
         setInputValue('');
         setFile(null);
         setModalOpen(false);
       } else {
-        alert('提交失败，请重试。');
+        message.warning('提交失败');
+        console.log('提交失败');
       }
     } catch (error) {
-      console.error('提交错误:', error);
-      alert('提交失败，请检查网络连接。');
+      message.error('提交失败，请检查网络设置');
+      console.log('提交失败，请检查网络连接。');
     }
   };
 
