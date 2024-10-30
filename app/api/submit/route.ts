@@ -1,22 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
-import pool from '../../lib/db'; // 导入数据库连接池
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(request: { json: () => any; }) {
+    const apiUrl = process.env.API_URL; // 读取环境变量，获取后端服务的基础 URL
+    const body = await request.json(); // 解析请求体
+
     try {
-        const { content } = await req.json(); // 解析请求体中的 JSON 数据
-
-        if (!content) {
-            return NextResponse.json({ error: '内容不能为空' }, { status: 400 });
+        const response = await fetch(`${apiUrl}/submit`, { //向后端发送服务请求
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body), // 将请求体发送到后端
+        });
+        //请求失败直接返回
+        if (!response.ok) {
+            return NextResponse.json({ error: 'Failed to submit data' }, { status: 500 });
         }
-
-        const client = await pool.connect(); // 获取数据库连接
-        // 假设我们将内容插入到名为 'submissions' 的表中
-        await client.query('INSERT INTO submissions (content) VALUES ($1)', [content]);
-        client.release(); // 释放连接
-
-        return NextResponse.json({ message: '内容提交成功！' }, { status: 200 });
+        //解析成功的响应
+        const result = await response.json();
+        return NextResponse.json({ message: 'Submission successful', data: result });
     } catch (error) {
-        console.error('提交错误:', error);
-        return NextResponse.json({ error: '内部服务器错误' }, { status: 500 });
+        return NextResponse.json({ error: 'An error occurred while submitting data.' }, { status: 500 });
     }
 }

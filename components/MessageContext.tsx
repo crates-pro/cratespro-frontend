@@ -41,6 +41,8 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
 // 自定义 hook 使用上下文
 export const useMessage = () => {
   const context = useContext(MessageContext);
-
+  if (!context) {
+    throw new Error('useMessage must be used within a MessageProvider');
+  }
   return context;
 };
