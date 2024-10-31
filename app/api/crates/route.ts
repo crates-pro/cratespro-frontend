@@ -1,18 +1,20 @@
-// /home/rust/workspace/cratespro-frontend/app/api/programs/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import pool from '../../lib/db';
 
 export async function GET(req: NextRequest) {
   try {
-    const client = await pool.connect();
-    const res = await client.query('SELECT name, description FROM programs');
-    client.release();
+    // 发送 HTTP 请求获取外部数据
+    const externalApiUrl = 'http://210.28.134.203:6888/crates'; // 替换为你的外部 API URL
+    const externalRes = await fetch(externalApiUrl);
 
-    const programs = res.rows;
+    if (!externalRes.ok) {
+      throw new Error('Failed to fetch external data');
+    }
 
-    return NextResponse.json(programs);
+    const externalData = await externalRes.json();
+
+    return NextResponse.json(externalData);
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error('Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
