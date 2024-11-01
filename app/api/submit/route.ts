@@ -1,23 +1,22 @@
 import { NextResponse } from 'next/server';
 
-export async function POST(request: { json: () => any; }) {
-    const apiUrl = process.env.API_URL; // 读取环境变量，获取后端服务的基础 URL
-    const body = await request.json(); // 解析请求体
+export async function POST(request: Request) {
+    const apiUrl = process.env.API_URL; // 读取环境变量
+    const formData = await request.formData(); // 解析请求体
+
+    console.log("Request FormData:", formData);
 
     try {
-        const response = await fetch(`${apiUrl}/submit`, { //向后端发送服务请求
+        const response = await fetch(`${apiUrl}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body), // 将请求体发送到后端
+            body: formData, // 保持 FormData
         });
-        //请求失败直接返回
+
         if (!response.ok) {
-            return NextResponse.json({ error: 'Failed to submit data' }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to submit data' }, { status: response.status });
         }
-        //解析成功的响应
-        const result = await response.json();
+
+        const result = await response.json(); // 确认返回的是 JSON 格式
         return NextResponse.json({ message: 'Submission successful', data: result });
     } catch (error) {
         return NextResponse.json({ error: 'An error occurred while submitting data.' }, { status: 500 });

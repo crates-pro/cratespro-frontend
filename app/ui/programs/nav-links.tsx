@@ -36,21 +36,24 @@ const NavLinks: React.FC = () => {
   //暂定上传数据类型为react表单类型
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData();
-    if (isGithubLink) {
-      formData.append('githubLink', inputValue);
-    } else if (file) {
-      formData.append('file', file);
-    }
+
 
     try {
+      const formData = new FormData();
+      if (isGithubLink) {
+        formData.append('githubLink', inputValue);
+      } else if (file) {
+        formData.append('file', file);
+      }
+
       //用fetch向服务器发声POST请求，提交用户输入的内容
       const response = await fetch('/api/submit', { //待替换为后端服务API
         method: 'POST',
         //请求体
         body: formData,
       });
-      //console.log('Response:', response); // 输出响应
+      console.log("aaaaaaaaaaaaaaaaaadata ", formData);
+      console.log('Response:', response); // 输出响应
 
       //响应处理，根据响应结果显示提示信息，并重置输入框或关闭弹窗
       if (response.ok) {

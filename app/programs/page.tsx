@@ -13,17 +13,21 @@ interface ObjectData {
 interface CVE {
   id: string;
   description: string;
+
   name: string;
   version: string;
 }
 
 const ProgramsPage = () => {
+
+
+
   const [objects, setObjects] = useState<ObjectData[]>([]); //从接口获取Rust程序数据
   const [cveData, setCveData] = useState<CVE[]>([]); //从接口获取CVE数据
 
   //获取数据
   useEffect(() => {
-    fetch('/api/crates') //这里应调用后端接口：GET http://localhost:6888/api/crates  （？）
+    fetch('/api/crates') //这里应调用nextjs路由
       .then(response => response.json())
       .then(data => {
         console.log('Fetched crates data:', data); //调试输出
@@ -35,7 +39,7 @@ const ProgramsPage = () => {
         }
       });
 
-    fetch('/api/cves') //这里应调用后端接口： GET http://localhost:6888/api/crates/{name} （？）
+    fetch('/api/cves') //这里应调用nextjs路由
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -43,7 +47,7 @@ const ProgramsPage = () => {
         return response.text();  // 暂时使用 text() 来调试
       })
       .then(text => {
-        console.log('Response text:', text);
+        //console.log('Response text:', text);
         return JSON.parse(text); // 手动解析 JSON
       })
       .then(data => setCveData(data))
