@@ -12,14 +12,12 @@ import SecurityAdvisories from '../../../../components/SecurityAdvisories';
 import BenchmarkResults from '../../../../components/BenchmarkResults';
 import VersionsSelector from '../../../../components/VersionsSelector';
 import { CrateInfo } from '@/app/lib/crate_info';
-
 //异步获取依赖树
 async function fetchDependencyTree(name: string, version: string) {
     const response = await fetch(`/api/crates/${name}/${version}`);
     const versionData = await response.json();
 
     const dependencies = versionData.dependencies || [];
-
     const dependenciesDetails = await Promise.all(dependencies.map(async (subDep: { name: string; version: string; }) => {
         return fetchDependencyTree(subDep.name, subDep.version);
     }));

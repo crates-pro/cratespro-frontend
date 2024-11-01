@@ -10,6 +10,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import React from 'react';
+import { message } from 'antd';
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
@@ -23,18 +25,17 @@ const links = [
   // { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
 ];
 
-export default function NavLinks() {
+const NavLinks: React.FC = () => {
   const pathname = usePathname();
   const [isModalOpen, setModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-
   const [file, setFile] = useState<File | null>(null);
   const [isGithubLink, setIsGithubLink] = useState(true); // 控制输入类型
+  const [messageApi, contextHolder] = message.useMessage();//antd-message的hooks调用
 
   //暂定上传数据类型为react表单类型
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const formData = new FormData();
     if (isGithubLink) {
       formData.append('githubLink', inputValue);
@@ -44,29 +45,33 @@ export default function NavLinks() {
 
     try {
       //用fetch向服务器发声POST请求，提交用户输入的内容
-      const response = await fetch('/api/submi', {  // 待替换为服务器API
+      const response = await fetch('/api/submit', { //待替换为后端服务API
         method: 'POST',
-        //请求体，将对象转换为json字符串
+        //请求体
         body: formData,
       });
+      //console.log('Response:', response); // 输出响应
+
       //响应处理，根据响应结果显示提示信息，并重置输入框或关闭弹窗
       if (response.ok) {
-        alert('内容提交成功！');//提交成功后重置输入框的值，并关闭弹窗
+        messageApi.success('提交成功');//提交成功后重置输入框的值，并关闭弹窗
+        console.log('提交成功');
         setInputValue('');
         setFile(null);
         setModalOpen(false);
       } else {
-        alert('提交失败，请重试。');
+        messageApi.error('提交失败,请重试', 2);
       }
     } catch (error) {
-      console.error('提交错误:', error);
-      alert('提交失败，请检查网络连接。');
+      messageApi.error('提交失败，请检查网络连接');
+      //console.log('提交失败，请检查网络连接。', error);
     }
   };
 
   //渲染部分
   return (
     <>
+      {contextHolder}
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (
@@ -186,3 +191,5 @@ export default function NavLinks() {
     </>
   );
 }
+
+export default NavLinks;
