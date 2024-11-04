@@ -29,16 +29,20 @@ async function fetchCVE(id: string): Promise<CVE> {
   };
 }
 
-export default function CVEDetail({ params }: { params: { id: string } }) {
+type Params = Promise<{ id: string }>
+
+export default function CVEDetail({ params }: { params: Params }) {
+  const { id } = React.use(params);
+
   const [cve, setCve] = useState<CVE | null>(null);
 
   useEffect(() => {
     const getCVE = async () => {
-      const data = await fetchCVE(params.id);
+      const data = await fetchCVE(id);
       setCve(data);
     };
     getCVE();
-  }, [params.id]);
+  }, [id]);
 
   if (!cve) {
     return <div>Loading...</div>;
