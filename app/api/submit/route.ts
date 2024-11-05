@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: { json: () => any; }) {
+export async function POST(request: NextRequest) {
     const apiUrl = process.env.API_URL; // 读取环境变量，获取后端服务的基础 URL
     const body = await request.json(); // 解析请求体
 
@@ -19,7 +19,7 @@ export async function POST(request: { json: () => any; }) {
         //解析成功的响应
         const result = await response.json();
         return NextResponse.json({ message: 'Submission successful', data: result });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'An error occurred while submitting data.' }, { status: 500 });
     }
 }

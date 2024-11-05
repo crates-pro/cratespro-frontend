@@ -34,7 +34,7 @@ export async function GET() {
   try {
     const randomCVEs = Array.from({ length: 7 }, generateRandomCVE);
     return NextResponse.json(randomCVEs);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

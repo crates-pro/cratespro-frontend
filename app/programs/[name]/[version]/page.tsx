@@ -2,15 +2,15 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Header from '../../../../components/Header';
-import Footer from '../../../../components/Footer';
-import CrateInfoCard from '../../../../components/CrateInfoCard';
-import DependenciesList, { Dependency } from '../../../../components/DependenciesList';
-import DependencyGraph, { GraphDependency } from '../../../../components/DependencyGraph';
-import VulnerabilitiesList, { Vulnerability } from '../../../../components/VulnerabilitiesList';
-import SecurityAdvisories from '../../../../components/SecurityAdvisories';
-import BenchmarkResults from '../../../../components/BenchmarkResults';
-import VersionsSelector from '../../../../components/VersionsSelector';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import CrateInfoCard from '@/components/CrateInfoCard';
+import DependenciesList, { Dependency } from '@/components/DependenciesList';
+import DependencyGraph from '@/components/DependencyGraph';
+import VulnerabilitiesList, { Vulnerability } from '@/components/VulnerabilitiesList';
+import SecurityAdvisories from '@/components/SecurityAdvisories';
+import BenchmarkResults from '@/components/BenchmarkResults';
+import VersionsSelector from '@/components/VersionsSelector';
 import { CrateInfo } from '@/app/lib/crate_info';
 //异步获取依赖树
 async function fetchDependencyTree(name: string, version: string) {
@@ -36,7 +36,7 @@ const CratePage = () => {
     const [crateInfo, setCrateInfo] = useState<CrateInfo | null>(null);
     const [versions, setVersions] = useState<string[]>([]);
     const [dependencies, setDependencies] = useState<Dependency[]>([]);
-    const [graphDependencies, setGraphDependencies] = useState<GraphDependency>();
+    // const [graphDependencies, setGraphDependencies] = useState<GraphDependency>();
     const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
     const [benchmarks, setBenchmarks] = useState<{ name: string; value: string }[]>([]);
     const { name, version } = useParams<{ name: string; version: string }>();
@@ -74,7 +74,7 @@ const CratePage = () => {
             });
 
 
-    }, [crateName, currentVersion]);
+    }, [crateName, currentVersion, name, version]);
 
 
     useEffect(() => {
@@ -82,7 +82,7 @@ const CratePage = () => {
             try {
                 const graphDep = await fetchDependencyTree(crateName, currentVersion);
                 console.log(graphDep);
-                setGraphDependencies(graphDep);
+                // setGraphDependencies(graphDep);
             } catch (error) {
                 console.error('Error fetching dependency tree:', error);
             }
@@ -121,12 +121,14 @@ const CratePage = () => {
                         <VersionsSelector
                             versions={versions}
                             currentVersion={version}
-                            crateName={crateInfo.name}
+                            // crateName={crateInfo.name}
                             onVersionChange={handleVersionChange}
                         />
 
                         <DependenciesList dependencies={dependencies} onDependencyClick={handleDependencyClick} />
-                        <DependencyGraph crateName={name} currentVersion={version} dependencies={graphDependencies} />
+                        <DependencyGraph crateName={name} currentVersion={version}
+                        // dependencies={graphDependencies}
+                        />
                     </div>
                 </div>
             </main>
