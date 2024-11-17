@@ -58,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { name: string
     }
 
     const versionInfo = versionRes.rows[0];
-    const dependencies = dependenciesRes.rows.map((row: any) => ({
+    const dependencies = dependenciesRes.rows.map((row) => ({
       name: row.dependency_name,
       version: row.dependency_version,
     }));

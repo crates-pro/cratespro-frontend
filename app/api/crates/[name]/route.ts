@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: { name: string
       [name]
     );
 
-    const versions = versionsRes.rows.map((row: any) => row.version);
+    const versions = versionsRes.rows.map((row) => row.version);
 
     client.release();
 

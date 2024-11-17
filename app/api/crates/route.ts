@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // 发送 HTTP 请求获取外部数据
     const externalApiUrl = 'http://210.28.134.203:6888/api/crates'; // 替换为你的外部 API URL

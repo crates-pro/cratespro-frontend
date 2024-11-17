@@ -11,11 +11,6 @@ export async function POST(request: Request) {
             method: 'POST',
             body: formData, // 保持 FormData
         });
-
-        if (!response.ok) {
-            return NextResponse.json({ error: 'Failed to submit data' }, { status: response.status });
-        }
-
         const result = await response.json(); // 确认返回的是 JSON 格式
         return NextResponse.json({ message: 'Submission successful', data: result });
     } catch (error) {
