@@ -75,6 +75,7 @@ const NavLinks: React.FC = () => {
   return (
     <>
       {contextHolder}
+      {/* {Home按钮} */}
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (
@@ -93,16 +94,6 @@ const NavLinks: React.FC = () => {
           </Link>
         );
       })}
-
-      {/* 提交按钮 */}
-      {/* <button
-        onClick={() => setModalOpen(true)}
-        className="mt-4 flex h-[48px] w-full items-center justify-center rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600"
-      >
-        Submit
-      </button> */}
-
-
 
       {/* submit按钮 */}
       <button
