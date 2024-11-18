@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 import { CrateInfo } from '@/app/lib/crate_info';
 
-export async function GET(req: NextRequest, { params }: { params: { name: string } }) {
+type Params = Promise<{ name: string }>
+
+export async function GET(req: NextRequest, props: { params: Params }) {
+  const params = await props.params
+
   const { name } = params;
 
   try {

@@ -15,6 +15,8 @@ interface Dependency {
   version: string;
 }
 
+type Params = Promise<{ name: string, version: string }>
+
 function generateRandomVulnerabilities(): Vulnerability[] {
   const severities: Vulnerability['severity'][] = ['low', 'medium', 'high'];
   const randomVulnerabilities: Vulnerability[] = [];
@@ -34,7 +36,8 @@ function generateRandomVulnerabilities(): Vulnerability[] {
   return randomVulnerabilities;
 }
 
-export async function GET(req: NextRequest, { params }: { params: { name: string, version: string } }) {
+export async function GET(req: NextRequest, props: { params: Params }) {
+  const params = await props.params
   const { name, version } = params;
   const nameAndVersion = `${name}/${version}`;
 

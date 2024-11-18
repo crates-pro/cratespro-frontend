@@ -1,9 +1,7 @@
 
 'use client';
 import {
-  UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
@@ -65,7 +63,7 @@ const NavLinks: React.FC = () => {
       } else {
         messageApi.error('提交失败,请重试', 2);
       }
-    } catch (error) {
+    } catch {
       messageApi.error('提交失败，请检查网络连接');
       //console.log('提交失败，请检查网络连接。', error);
     }
