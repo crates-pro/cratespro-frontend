@@ -72,7 +72,7 @@ const HomePage = () => {
                 </div>
 
                 <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
-                    <h2 className="text-2xl font-semibold">Seeing the big picture can be difficult—but it shouldn't be</h2>
+                    <h2 className="text-2xl font-semibold">Seeing the big picture can be difficult—but it shouldn&apos;t be</h2>
                     <p className="mt-2">The Open Source Insights page for each package shows the full dependency graph and updates it every day. The information provided can help you make informed decisions about using, building, and maintaining your software.</p>
                     <p className="mt-2">With Open Source Insights, you can actually see the dependency graph for a package, then isolate the paths to a particular dependency. Or see whether a vulnerability in a dependency might affect your code. Or compare two versions of a package to see how the dependencies have changed in a new release.</p>
                 </div>

@@ -73,8 +73,8 @@ const CratePage = () => {
                 console.error('Error fetching data:', error);
             });
 
-
-    }, [crateName, currentVersion]);
+        //}, [crateName, currentVersion]);
+    }, [name, version]);
 
 
     useEffect(() => {

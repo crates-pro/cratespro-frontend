@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { useRouter } from 'next/navigation';
+//import internal from 'stream';
 
 export interface GraphDependency {
     name: string;
@@ -24,7 +25,7 @@ export interface DependencyGraphProps {
     dependencies?: GraphDependency;
 }
 
-const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVersion, dependencies }) => {
+const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVersion }) => {
     const [graphDependencies, setGraphDependencies] = useState<GraphDependency | null>(null);
     const d3Container = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
@@ -33,10 +34,10 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         async function fetchDependencyTree(name: string, version: string): Promise<GraphDependency> {
             const response = await fetch(`/api/crates/${name}/${version}`);
             const versionData = await response.json();
-            
+
             const dependencies = versionData.dependencies || [];
-            
-            const dependenciesDetails = await Promise.all(dependencies.map(async (subDep: any) => {
+
+            const dependenciesDetails = await Promise.all(dependencies.map(async (subDep: GraphDependency) => {
                 return fetchDependencyTree(subDep.name, subDep.version);
             }));
 
@@ -65,25 +66,25 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         d3.select(d3Container.current).select('svg').remove();
 
         const svg = d3.select(d3Container.current).append('svg')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .attr('viewBox', `0 0 ${width} ${height}`)
-        .attr('preserveAspectRatio', 'xMidYMid meet');
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('viewBox', `0 0 ${width} ${height}`)
+            .attr('preserveAspectRatio', 'xMidYMid meet');
 
         svg.append('defs').append('marker')
-        .attr('id', 'arrowhead')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 20) // 增加 refX 以使箭头远离节点
-        .attr('refY', 0)
-        .attr('orient', 'auto')
-        .attr('markerWidth', 7)
-        .attr('markerHeight', 7)
-        .append('path')
-        .attr('d', 'M 0,-5 L 10,0 L 0,5')
-        .attr('fill', '#333')
-        .style('stroke', 'none');
-    
-    
+            .attr('id', 'arrowhead')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 20) // 增加 refX 以使箭头远离节点
+            .attr('refY', 0)
+            .attr('orient', 'auto')
+            .attr('markerWidth', 7)
+            .attr('markerHeight', 7)
+            .append('path')
+            .attr('d', 'M 0,-5 L 10,0 L 0,5')
+            .attr('fill', '#333')
+            .style('stroke', 'none');
+
+
 
         const nodesMap = new Map<string, DependencyNode>();
         const links: DependencyLink[] = [];
@@ -108,12 +109,12 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         const nodes = Array.from(nodesMap.values());
 
         const simulation = d3.forceSimulation<DependencyNode>(nodes)
-        .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(100)) // 增加距离
-        .force('charge', d3.forceManyBody().strength(-500)) // 增加排斥力
-        .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide().radius(50)); // 增加碰撞半径
+            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(100)) // 增加距离
+            .force('charge', d3.forceManyBody().strength(-500)) // 增加排斥力
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collide', d3.forceCollide().radius(50)); // 增加碰撞半径
 
-            const link = svg.append('g')
+        const link = svg.append('g')
             .selectAll('line')
             .data(links)
             .enter().append('line')

@@ -34,7 +34,7 @@ const ProgramsPage = () => {
         if (Array.isArray(data)) {
           setObjects(data);
         } else {
-          console.error('Crates data is not an array:', data);
+          //console.error('Crates data is not an array:', data);
           setObjects([]);//如果不是数组，设置为空数组
         }
       });
