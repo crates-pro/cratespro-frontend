@@ -79,7 +79,7 @@ const HomePage = () => {
 
                 <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
                     <h2 className="text-2xl font-semibold">How it works</h2>
-                    <p className="mt-2">The service repeatedly examines sites such as github.com, npmjs.com, and pkg.go.dev to find up-to-date information about open source software packages. Using that information, it builds for each package the full dependency graph from scratch—not just from package lock files—connecting it to the packages it depends on and to those that depend on it. This transitive dependency graph allows problems in any package to be made visible to the owners and users of any software they affect.</p>
+                    <p className="mt-2">The service repeatedly examinesabaaba sites such as github.com, npmjs.com, and pkg.go.dev to find up-to-date information about open source software packages. Using that information, it builds for each package the full dependency graph from scratch—not just from package lock files—connecting it to the packages it depends on and to those that depend on it. This transitive dependency graph allows problems in any package to be made visible to the owners and users of any software they affect.</p>
                 </div>
             </div>
         </div >
