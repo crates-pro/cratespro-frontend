@@ -68,18 +68,24 @@ const HomePage = () => {
                 <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
                     <h2 className="text-2xl font-semibold">New features in the deps.dev API</h2>
                     <p className="mt-2">The deps.dev API, which provides free access to the data that powers this website, now has experimental batch and pull support, as well as a new version that comes with a stability guarantee and deprecation policy.</p>
+
                     <p className="mt-2">Learn more about the new features on our blog, or get started with the API documentation, and code examples.</p>
+
                 </div>
 
                 <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
                     <h2 className="text-2xl font-semibold">Seeing the big picture can be difficult—but it shouldn&apos;t be</h2>
                     <p className="mt-2">The Open Source Insights page for each package shows the full dependency graph and updates it every day. The information provided can help you make informed decisions about using, building, and maintaining your software.</p>
+
                     <p className="mt-2">With Open Source Insights, you can actually see the dependency graph for a package, then isolate the paths to a particular dependency. Or see whether a vulnerability in a dependency might affect your code. Or compare two versions of a package to see how the dependencies have changed in a new release.</p>
+
                 </div>
 
                 <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
                     <h2 className="text-2xl font-semibold">How it works</h2>
+
                     <p className="mt-2">The service repeatedly examines sites such as github.com, npmjs.com, and pkg.go.dev to find up-to-date information about open source software packages. Using that information, it builds for each package the full dependency graph from scratch—not just from package lock files—connecting it to the packages it depends on and to those that depend on it. This transitive dependency graph allows problems in any package to be made visible to the owners and users of any software they affect.</p>
+
                 </div>
             </div>
         </div >
