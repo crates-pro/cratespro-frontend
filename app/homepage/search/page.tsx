@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Home() {
@@ -57,17 +58,19 @@ export default function Home() {
 
             {/*搜索数据展示 */}
             <div className="max-w-2xl ml-10 p-4">
-                <div id="results" className="space-y-4">
-                    {results.map((item, index) => (
-                        <div
-                            key={index}
-                            className="p-4 rounded-md hover:bg-blue-100 transition"
-                        >
-                            <strong>{item.crate_name}</strong>
-                            <div>Crate {item.version}Published {item.date}</div>
-                        </div>
-                    ))}
-                </div>
+                <Link href="/homepage/tokio/1.41.1">
+                    <div id="results" className="space-y-4">
+                        {results.map((item, index) => (
+                            <div
+                                key={index}
+                                className="p-4 rounded-md hover:bg-blue-100 transition"
+                            >
+                                <strong>{item.crate_name}</strong>
+                                <div>Crate {item.version}Published {item.date}</div>
+                            </div>
+                        ))}
+                    </div>
+                </Link>
             </div>
         </div>
     );
