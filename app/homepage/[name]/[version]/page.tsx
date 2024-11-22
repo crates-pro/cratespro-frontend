@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
 const CratePage = () => {
     // Other code
 
@@ -52,11 +52,15 @@ const CratePage = () => {
                 <nav className="mt-4">
                     <ul className="flex space-x-4 text-gray-500 relative">
                         <li className="cursor-pointer relative">
-                            <a href="/homepage/search/ad" className="block py-2 relative z-10">Overview</a>
+                            <Link href="/homepage/search/ad">
+                                <div className="block py-2 relative z-10">Overview</div>
+                            </Link>
                             <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
                         </li>
                         <li className="cursor-pointer relative">
-                            <a href="/homepage/search/ad/dependencies" className="block py-2 relative z-10">Dependencies</a>
+                            <Link href="/homepage/search/ad/dependencies">
+                                <div className="block py-2 relative z-10">Dependencies</div>
+                            </Link>
                         </li>
                         <li className="cursor-pointer relative">
                             <a href="#" className="block py-2 relative z-10">Dependents</a>
