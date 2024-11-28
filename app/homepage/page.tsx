@@ -1,44 +1,42 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import '@/app/ui/global.css';
+import Link from 'next/link';
+import VulnerabilityList from '@/components/CveList';
 
 
 const HomePage = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleKeyPress = (e: { key: string; }) => {
+        // 检查是否按下了回车键
+        if (e.key === 'Enter') {
+            // 如果是回车键，执行搜索
+            performSearch();
+        }
+    };
+
+    const performSearch = () => {
+        // 这里可以添加任何其他逻辑，比如验证搜索内容
+        if (searchQuery.trim()) {
+            // 使用 Link 跳转到搜索页面
+            window.location.href = `/homepage/search?crate_name=${searchQuery}`;
+        }
+    };
+
+
+
     return (
-        //紫色渐变
-        // <div className="min-h-screen bg-gray-900 text-white">
-        //     {/* 头部和搜索部分 */}
-        //     <div className="bg-gradient-to-b from-[#4D004D] to-white">
-        //         <header className="p-4 flex justify-between items-center">
-        //             <div className="text-2xl font-bold">open/source/insights</div>
-        //             <nav>
-        //                 <ul className="flex space-x-5">
-        //                     <li><a href="#" className="hover:underline">About</a></li>
-        //                     <li><a href="#" className="hover:underline">Documentation</a></li>
-        //                     <li><a href="#" className="hover:underline">Blog</a></li>
-        //                 </ul>
-        //             </nav>
-        //         </header>
-        //         <div className="flex flex-col items-center justify-center h-80">
-        //             <h1 className="text-4xl font-bold mb-4">Understand your dependencies</h1>
-        //             <p className="text-center mb-4">Your software and your users rely not only on the code you write, but also on the code your code depends on, the code that code depends on, and so on.</p>
-        //             <div className="flex items-center mb-4">
-        //                 <input
-        //                     type="text"
-        //                     placeholder="Search for open source packages, advisories and projects"
-        //                     className="p-2 border-none rounded-md text-gray-800 w-2/3 max-w-xl"
-        //                 />
-        //                 <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700">Search</button>
-        //             </div>
-        //         </div>
-        //     </div>
-
-
         //绿色渐变
-        < div className="min-h-screen bg-gray-900 text-white" >
-            <header className="bg-teal-500 p-4 flex justify-between items-center">
-                <div className="text-2xl font-bold">open/source/insights</div>
+        < div className=" min-h-screen bg-gray-900 text-white" >
+            <header className="flex bg-teal-500 p-4 flex justify-between items-center">
+                <Link href="/homepage">
+                    <div className="flex text-2xl font-bold">open/source/insights</div>
+                </Link>
+
                 <nav>
                     <ul className="flex space-x-5">
+
                         <li><a href="#" className="hover:underline">About</a></li>
                         <li><a href="#" className="hover:underline">Documentation</a></li>
                         <li><a href="#" className="hover:underline">Blog</a></li>
@@ -54,17 +52,30 @@ const HomePage = () => {
                         type="text"
                         placeholder="Search for open source crates"
                         className="p-2 border-none rounded-md text-gray-800 w-80 max-w-2xl"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)} // 更新搜索内容
+                        onKeyDown={handleKeyPress}
                     />
-                    <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700">Search</button>
+                    <Link href={{
+                        pathname: '/homepage/search',
+                        query: {
+                            crate_name: searchQuery, // 将搜索内容作为参数传递给新页面
+                        },
+                    }}>
+                        <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700">Search</button>
+                    </Link>
                 </div>
             </div>
 
 
             {/* 分割线部分 */}
-            <div className="border-t-4 border-green-500 h-1/4"></div>
+            <div className="flex border-t-4 border-green-500 h-1/4"></div>
+
+            <VulnerabilityList />
+
 
             {/* 一些介绍 */}
-            <div className="container mx-auto p-10">
+            <div className="flex container mx-auto p-10">
                 <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
                     <h2 className="text-2xl font-semibold">New features in the deps.dev API</h2>
                     <p className="mt-2">The deps.dev API, which provides free access to the data that powers this website, now has experimental batch and pull support, as well as a new version that comes with a stability guarantee and deprecation policy.</p>

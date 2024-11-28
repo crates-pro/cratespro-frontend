@@ -1,74 +1,89 @@
 "use client";
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import NewHeader from '@/components/NewHeader';
+import { searchResult } from '@/app/lib/all_interface';
 
-import { useState } from 'react';
+const Search = () => {
+    const [results, setResults] = useState<searchResult | null>(null);
+    const searchParams = useSearchParams();
+    const name = searchParams.get('crate_name');
 
-export default function Home() {
-    //const [query,] = useState(''); //const [query, setQuery] = useState('');
-    // 使用假数据进行测试,const [results, setResults] = useState([
-    const [results,] = useState([
-        { crate_name: "tokio", version: "1.41.1", date: "2023-01-01" },
-        { crate_name: "tokio", version: "0.1.2", date: "2023-02-01" },
-    ]);
+    useEffect(() => {
+        if (name) {
+            fetchResults(name); // 使用 name 发起请求
+        }
+    }, [name]); // 当 name 改变时重新运行
 
-    // const search = async () => {
-    //     // 待替换api
-    //     const apiUrl = 'api';
-
-    //     try {
-    //         const response = await fetch(apiUrl, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ query }),
-    //         });
-
-    //         const data = await response.json();
-    //         setResults(data.results);
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // };
+    const fetchResults = async (query: string) => {
+        try {
+            const response = await fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query, // 将 query 作为 JSON 发送
+                    pagination: {
+                        page: 1,    // 页码
+                        per_page: 20 // 每页条数
+                    }
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data1 = await response.json();
+            const data = data1.data;
+            setResults(data); // 假设返回的数据data字段
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     return (
-        //页面顶部和搜索框
         <div className="min-h-screen bg-gray-100">
-            <header className="bg-white shadow p-4">
-                <div className="flex justify-between items-center">
-                    <div className="text-xl font-bold flex items-center space-x-1">
-                        <span>open</span>
-                        <span className="text-green-500">/</span>
-                        <span>source</span>
-                        <span className="text-green-500">/</span>
-                        <span>insights</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <input
-                            type="text"
-                            className="p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Search..."
-                        />
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700">
-                            Search
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            {/*搜索数据展示 */}
+            <NewHeader />
             <div className="max-w-2xl ml-10 p-4">
                 <div id="results" className="space-y-4">
-                    {results.map((item, index) => (
-                        <div
-                            key={index}
-                            className="p-4 rounded-md hover:bg-blue-100 transition"
-                        >
-                            <strong>{item.crate_name}</strong>
-                            <div>Crate {item.version}Published {item.date}</div>
-                        </div>
-                    ))}
+                    {results ? (
+                        results.data.total_page > 0 ? (
+                            results.data.items.map((item, index) => (
+                                <Link
+                                    key={index}
+                                    href={{
+                                        pathname: `/homepage/${item.name}/${item.version}`,
+                                        query: {
+                                            crate_name: item.name,
+                                            version: item.version,
+                                        },
+                                    }}
+                                >
+                                    <div className="p-4 rounded-md hover:bg-blue-100 transition">
+                                        <strong>{item.name}</strong>
+                                        <div>
+                                            Crate {item.version}
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))
+                        ) : (
+                            <p>No items found.</p>
+                        )
+                    ) : (
+                        <p>Loading...</p>
+                    )}
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <Search />
+        </Suspense>
     );
 }
