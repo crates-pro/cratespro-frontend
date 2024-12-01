@@ -1,13 +1,15 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+//import { useSearchParams } from 'next/navigation';
 import { cratesInfo } from '@/app/lib/all_interface';
+import { useParams } from 'next/navigation'
+
 
 const CratePage = () => {
     const [isOpen, setIsOpen] = useState(false); // 状态管理下拉菜单的显示
-
-
+    const params = useParams();
+    //console.log("params:", params);
 
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,13 +17,16 @@ const CratePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const searchParams = useSearchParams();
-    const crateName = searchParams.get('crate_name'); // 从 URL 中获取 crate_name 参数
-    const crateVersion = searchParams.get('version'); // 从 URL 中获取 version 参数
+    // const searchParams = useSearchParams();
+    // const crateName = searchParams.get('crate_name'); // 从 URL 中获取 crate_name 参数
+    // const crateVersion = searchParams.get('version'); // 从 URL 中获取 version 参数
+
+    const crateName = params.name; // 从 URL 中获取 crate_name 参数
+    const crateVersion = params.version; // 从 URL 中获取 version 参数
     useEffect(() => {
         const fetchCrateData = async () => {
             try {
-                const response = await fetch(`/api/crates/${crateName}/${crateVersion}`);
+                const response = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -42,7 +47,7 @@ const CratePage = () => {
 
 
         fetchCrateData(); // 调用函数来获取数据
-    }, [crateName, crateVersion]); // 依赖项数组，确保在 crateName 或 version 改变时重新获取数据
+    }, [params.name, params.version, params.nsfront, params.nsbehind]); // 依赖项数组，确保在 name 或 version 改变时重新获取数据
 
 
     const toggleDropdown = () => {
@@ -105,13 +110,7 @@ const CratePage = () => {
                                                 {results?.versions.map((version, index) => (
                                                     <Link
                                                         key={index}
-                                                        href={{
-                                                            pathname: `/homepage/${crateName}/${version}`,
-                                                            query: {
-                                                                crate_name: crateName,
-                                                                version: version,
-                                                            },
-                                                        }}
+                                                        href={`/homepage/${params.nsfront}/${params.nsbehind}/${crateName}/${version}`}
                                                     >
                                                         <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                                                             {version}
@@ -150,39 +149,24 @@ const CratePage = () => {
                 <nav className="mt-4">
                     <ul className="flex space-x-4 text-gray-500 relative">
                         <li className="cursor-pointer relative">
-                            <Link href={{
-                                pathname: `/homepage/${crateName}/${crateVersion}`,
-                                query: {
-                                    crate_name: crateName,
-                                    version: crateVersion,
-                                },
-                            }}>
+                            <Link
+                                href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`}
+                            >
                                 <div className="block py-2 relative z-10">Overview</div>
                             </Link>
                             <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
                         </li>
                         <li className="cursor-pointer relative">
                             <Link
-                                href={{
-                                    pathname: `/homepage/${crateName}/${crateVersion}/dependencies`,
-                                    query: {
-                                        crate_name: crateName,
-                                        version: crateVersion,
-                                    },
-                                }}
+                                href={
+                                    `/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`}
                             >
                                 <div className="block py-2 relative z-10">Dependencies</div>
                             </Link>
                         </li>
 
                         <Link
-                            href={{
-                                pathname: `/homepage/${crateName}/${crateVersion}/dependents`,
-                                query: {
-                                    crate_name: crateName,
-                                    version: crateVersion,
-                                },
-                            }}
+                            href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`}
                         >
                             <li className="cursor-pointer relative">
                                 <div className="block py-2 relative z-10">Dependents</div>
@@ -232,13 +216,7 @@ const CratePage = () => {
                             <span className="font-bold">Indirect: {results ? JSON.stringify(results.dependencies.indirect) : 'No results available'}</span>
                         </div>
                         <Link
-                            href={{
-                                pathname: `/homepage/${crateName}/${crateVersion}/dependencies`,
-                                query: {
-                                    crate_name: crateName,
-                                    version: crateVersion,
-                                },
-                            }}
+                            href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`}
                         >
                             <div className="text-blue-500 hover:underline">
                                 View all dependencies
@@ -255,13 +233,7 @@ const CratePage = () => {
                             <span className="font-bold">Indirect: {results ? JSON.stringify(results.dependents.indirect) : 'No results available'}</span>
                         </div>
                         <Link
-                            href={{
-                                pathname: `/homepage/${crateName}/${crateVersion}/dependents`,
-                                query: {
-                                    crate_name: crateName,
-                                    version: crateVersion,
-                                },
-                            }}
+                            href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`}
                         >
                             <div className="text-blue-500 hover:underline">
                                 View all dependencies

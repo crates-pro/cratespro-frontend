@@ -7,16 +7,17 @@ import { searchResult } from '@/app/lib/all_interface';
 
 const Search = () => {
     const [results, setResults] = useState<searchResult | null>(null);
+    const [currentPage, setCurrentPage] = useState(1); // 添加当前页码状态
     const searchParams = useSearchParams();
     const name = searchParams.get('crate_name');
 
     useEffect(() => {
         if (name) {
-            fetchResults(name); // 使用 name 发起请求
+            fetchResults(name, currentPage); // 使用 name 和当前页发起请求
         }
-    }, [name]); // 当 name 改变时重新运行
+    }, [name, currentPage]); // 当 name 或 currentPage 改变时重新运行
 
-    const fetchResults = async (query: string) => {
+    const fetchResults = async (query: string, page: number) => {
         try {
             const response = await fetch('/api/search', {
                 method: 'POST',
@@ -24,9 +25,9 @@ const Search = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    query, // 将 query 作为 JSON 发送
+                    query,
                     pagination: {
-                        page: 1,    // 页码
+                        page, // 使用传入的页码
                         per_page: 20 // 每页条数
                     }
                 }),
@@ -42,6 +43,19 @@ const Search = () => {
         }
     };
 
+    const handleNextPage = () => {
+        if (results && currentPage < results.data.total_page) {
+            setCurrentPage(prevPage => prevPage + 1); // 增加页码
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prevPage => prevPage - 1); // 减少页码
+        }
+    };
+
+    console.log("results:", results?.data.items);
     return (
         <div className="min-h-screen bg-gray-100">
             <NewHeader />
@@ -52,18 +66,12 @@ const Search = () => {
                             results.data.items.map((item, index) => (
                                 <Link
                                     key={index}
-                                    href={{
-                                        pathname: `/homepage/${item.name}/${item.version}`,
-                                        query: {
-                                            crate_name: item.name,
-                                            version: item.version,
-                                        },
-                                    }}
+                                    href={`/homepage/${item.nsfront}/${item.nsbehind}/${item.name}/${item.version}`}
                                 >
                                     <div className="p-4 rounded-md hover:bg-blue-100 transition">
                                         <strong>{item.name}</strong>
                                         <div>
-                                            Crate {item.version}
+                                            Crate {item.version} - {item.nsfront}/{item.nsbehind}
                                         </div>
                                     </div>
                                 </Link>
@@ -74,6 +82,32 @@ const Search = () => {
                     ) : (
                         <p>Loading...</p>
                     )}
+                </div>
+
+                {/* 显示当前页数和总页数 */}
+                {results && (
+                    <div className="mt-4 text-center">
+                        <p>
+                            当前页: {currentPage} / 总页数: {results.data.total_page}
+                        </p>
+                    </div>
+                )}
+
+                <div className="flex justify-between mt-4">
+                    <button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300"
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={handleNextPage}
+                        disabled={results === null || currentPage >= results.data.total_page}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300"
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>
