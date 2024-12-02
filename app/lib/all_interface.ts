@@ -8,7 +8,9 @@ export interface searchResult {
             {
                 "name": string,
                 "version": string,
-                "date": number
+                "date": number,
+                "nsfront": string,
+                "nsbehind": string,
             },
         ]
     }

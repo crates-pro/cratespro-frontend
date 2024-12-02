@@ -1,54 +1,25 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-
 import Link from 'next/link';
-import DependencyTable from '../../../../../components/DependencyTable';
-import { dependenciesInfo } from '@/app/lib/all_interface';
-import { useSearchParams } from 'next/navigation';
-
-// const defaultdata = {
-//     "direct_count": 1,
-//     "indirect_count": 2,
-//     "data": [
-//         {
-//             "crate_name": 'unknown',
-//             "version": 'unknown',
-//             "relation": 'unknown',
-//             "license": 'unknown',
-//             "dependencies": 0,
-//         },
-//     ]
-// }
-
-
-// interface DependencyItem {
-//     crate_name: string;
-//     version: string;
-//     relation: string;
-//     license: string;
-//     dependencies: number;
-// }
-
+import DependentTable from '../../../../../../../components/DependentTable';
+import { dependentsInfo } from '@/app/lib/all_interface';
+import { useParams } from 'next/navigation';
 
 
 const CratePage = () => {
-
-
-    const [results, setResults] = useState<dependenciesInfo | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
-
+    const [results, setResults] = useState<dependentsInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const searchParams = useSearchParams();
 
-    const crateName = searchParams.get('crate_name'); // 从 URL 中获取 crate_name 参数
-    const version = searchParams.get('version'); // 从 URL 中获取 version 参数
+    const params = useParams();
+
+    const crateName = params.name; // 从 URL 中获取 crate_name 参数
+    const version = params.version; // 从 URL 中获取 version 参数
 
     useEffect(() => {
         const fetchCrateData = async () => {
             try {
-                setError(null);
-                const response = await fetch(`/api/crates/${crateName}/${version}/dependencies`);
+                const response = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -60,17 +31,20 @@ const CratePage = () => {
                 setResults(data); // 设置获取的数据
 
             } catch (error) {
+                setError(null);
                 console.log('Error fetching data:', error);
             } finally {
                 setLoading(false); // 完成加载
             }
         };
         fetchCrateData(); // 调用函数来获取数据
-    }, [crateName, version]); // 依赖项数组，确保在 crateName 或 version 改变时重新获取数据
+    }, [params.name, params.version, params.nsfront, params.nsbehind]); // 依赖项数组，确保在 crateName 或 version 改变时重新获取数据
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div className="text-red-500">Error: {error}</div>;
-    console.log('dependencyyyyyyyyyyyyyyy', results?.data);
+
+    //console.log('dependencyyyyyyyyyyyyyyy', results?.data);
+
     return (
         <div>
             {/* Existing header and search */}
@@ -107,22 +81,15 @@ const CratePage = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center mb-4">
+                    <div className="flex items-center space-x-4">
                         <input
                             type="text"
-                            placeholder="Search for open source crates"
-                            className="p-2 border-none rounded-md text-gray-800 w-80 max-w-2xl"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)} // 更新搜索内容
+                            className="p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Search..."
                         />
-                        <Link href={{
-                            pathname: '/homepage/search',
-                            query: {
-                                crate_name: searchQuery, // 将搜索内容作为参数传递给新页面
-                            },
-                        }}>
-                            <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700">Search</button>
-                        </Link>
+                        <button className="bg-blue-600 text-white px-4 py-2 rounded-r-md hover:bg-blue-700">
+                            Search
+                        </button>
                     </div>
                 </div>
 
@@ -130,42 +97,28 @@ const CratePage = () => {
                 <nav className="mt-4">
                     <ul className="flex space-x-4 text-gray-500 relative">
                         <li className="cursor-pointer relative">
-                            <Link href={{
-                                pathname: `/homepage/${crateName}/${version}`,
-                                query: {
-                                    crate_name: crateName,
-                                    version: version,
-                                },
-                            }}>
+                            <Link
+                                href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`}
+                            >
                                 <div className="block py-2 relative z-10">Overview</div>
                             </Link>
+
                         </li>
                         <li className="cursor-pointer relative">
                             <Link
-                                href={{
-                                    pathname: `/homepage/${crateName}/${version}/dependencies`,
-                                    query: {
-                                        crate_name: crateName,
-                                        version: version,
-                                    },
-                                }}
+                                href={
+                                    `/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`}
                             >
                                 <div className="block py-2 relative z-10">Dependencies</div>
                             </Link>
-                            <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
                         </li>
 
                         <Link
-                            href={{
-                                pathname: `/homepage/${crateName}/${version}/dependents`,
-                                query: {
-                                    crate_name: crateName,
-                                    version: version,
-                                },
-                            }}
+                            href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`}
                         >
                             <li className="cursor-pointer relative">
                                 <div className="block py-2 relative z-10">Dependents</div>
+                                <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
                             </li>
                         </Link>
                         {/* <li className="cursor-pointer relative">
@@ -176,9 +129,11 @@ const CratePage = () => {
                         </li> */}
                     </ul>
                 </nav>
+
             </header>
 
-            <DependencyTable data={results?.data} />
+
+            <DependentTable data={results?.data} />
 
         </div>
     );
