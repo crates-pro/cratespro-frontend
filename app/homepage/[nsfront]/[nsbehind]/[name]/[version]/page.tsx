@@ -164,7 +164,7 @@ const CratePage = () => {
                         </div>
                         <div className="flex justify-between">
                             <span>Pinned-Dependencies</span>
-                            <span>0/10</span>
+                            <span>9/10</span>
                         </div>
                     </div>
                 </div>
