@@ -3,6 +3,7 @@
 // next.config.mjs
 
 export default {
+
     async redirects() {
         return [
             {
@@ -13,3 +14,11 @@ export default {
         ];
     },
 };
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//     experimental: {
+//         ppr: 'incremental',
+//     },
+// }
+
+// module.exports = nextConfig
