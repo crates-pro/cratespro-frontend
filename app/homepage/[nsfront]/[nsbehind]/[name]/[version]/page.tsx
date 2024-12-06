@@ -1,28 +1,30 @@
+//Overview页面
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 //import { useSearchParams } from 'next/navigation';
 import { cratesInfo } from '@/app/lib/all_interface';
-import { useParams } from 'next/navigation'
+import { useParams } from 'next/navigation';
+
+
+
 
 
 const CratePage = () => {
-    const [isOpen, setIsOpen] = useState(false); // 状态管理下拉菜单的显示
+
     const params = useParams();
-    //console.log("params:", params);
 
 
-    const [searchQuery, setSearchQuery] = useState('');
+
+
+
+
     const [results, setResults] = useState<cratesInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // const searchParams = useSearchParams();
-    // const crateName = searchParams.get('crate_name'); // 从 URL 中获取 crate_name 参数
-    // const crateVersion = searchParams.get('version'); // 从 URL 中获取 version 参数
 
-    const crateName = params.name; // 从 URL 中获取 crate_name 参数
-    const crateVersion = params.version; // 从 URL 中获取 version 参数
+
     useEffect(() => {
         const fetchCrateData = async () => {
             try {
@@ -49,15 +51,6 @@ const CratePage = () => {
         fetchCrateData(); // 调用函数来获取数据
     }, [params.name, params.version, params.nsfront, params.nsbehind]); // 依赖项数组，确保在 name 或 version 改变时重新获取数据
 
-
-    const toggleDropdown = () => {
-        setIsOpen(prev => !prev);
-    };
-
-    const closeDropdown = () => {
-        setIsOpen(false);
-    };
-
     // 渲染部分
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -67,121 +60,6 @@ const CratePage = () => {
 
     return (
         <div>
-            {/* Existing header and search */}
-            <header className="bg-white shadow p-4">
-                <div className="flex justify-between items-center">
-                    <div className="text-xl font-bold flex flex-col items-start space-y-1">
-                        <Link href="/homepage">
-                            <div className="flex items-center space-x-1">
-                                <span>open</span>
-                                <span className="text-green-500">/</span>
-                                <span>source</span>
-                                <span className="text-green-500">/</span>
-                                <span>insights</span>
-                            </div>
-                        </Link>
-                        <div className="flex items-center space-x-2 mt-15">
-                            <span>{crateName}</span>
-                            {/*版本列表*/}
-                            <div className="relative">
-                                <button
-                                    onClick={toggleDropdown}
-                                    className="flex items-center px-4 py-2 border border-gray-300 rounded hover:bg-gray-100"
-                                >
-                                    {crateVersion || 'Select Version'}
-                                    <svg
-                                        className="ml-2 w-4 h-4"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                </button>
-                                {isOpen && (
-                                    <div className="absolute mt-1 w-full">
-                                        {/* 遮罩层 */}
-                                        <div className="absolute inset-0 bg-black opacity-50" onClick={closeDropdown}></div>
-                                        <div className="relative bg-white border border-gray-300 rounded shadow-lg z-20">
-                                            <ul className="max-h-60 overflow-y-auto">
-                                                {results?.versions.map((version, index) => (
-                                                    <Link
-                                                        key={index}
-                                                        href={`/homepage/${params.nsfront}/${params.nsbehind}/${crateName}/${version}`}
-                                                    >
-                                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                                            {version}
-                                                        </li>
-                                                    </Link>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <div className="flex items-center mb-4">
-                        <input
-                            type="text"
-                            placeholder="Search for open source crates"
-                            className="p-2 border-none rounded-md text-gray-800 w-80 max-w-2xl"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)} // 更新搜索内容
-                        />
-                        <Link href={{
-                            pathname: '/homepage/search',
-                            query: {
-                                crate_name: searchQuery, // 将搜索内容作为参数传递给新页面
-                            },
-                        }}>
-                            <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700">Search</button>
-                        </Link>
-                    </div>
-                </div>
-
-                {/* 导航栏 */}
-                <nav className="mt-4">
-                    <ul className="flex space-x-4 text-gray-500 relative">
-                        <li className="cursor-pointer relative">
-                            <Link
-                                href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`}
-                            >
-                                <div className="block py-2 relative z-10">Overview</div>
-                            </Link>
-                            <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
-                        </li>
-                        <li className="cursor-pointer relative">
-                            <Link
-                                href={
-                                    `/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`}
-                            >
-                                <div className="block py-2 relative z-10">Dependencies</div>
-                            </Link>
-                        </li>
-
-                        <Link
-                            href={`/homepage/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`}
-                        >
-                            <li className="cursor-pointer relative">
-                                <div className="block py-2 relative z-10">Dependents</div>
-                            </li>
-                        </Link>
-                        {/* <li className="cursor-pointer relative">
-                            <a href="#" className="block py-2 relative z-10">Compare</a>
-                        </li>
-                        <li className="cursor-pointer relative">
-                            <a href="#" className="block py-2 relative z-10">Versions</a>
-                        </li> */}
-                    </ul>
-                </nav>
-            </header>
-
             {/* cve */}
             <div className="container mx-auto my-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-6">
