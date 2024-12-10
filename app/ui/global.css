@@ -16,3 +16,8 @@ input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.custom-margin-left {
+  margin-left: 500px;
+  /* 自定义的左边距 */
+}

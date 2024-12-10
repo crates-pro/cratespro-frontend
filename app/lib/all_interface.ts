@@ -31,13 +31,10 @@ export interface cratesInfo {
         "indirect": number
     },
 
-    "cves": [
-        {
-            "cve_id": string,
-            "url": string,
-            "description": string
-        }
-    ],
+    "cves": string[],
+    "license": string,
+    "github_url": string,
+    "doc_url": string,
     "versions": string[],
 
 }
