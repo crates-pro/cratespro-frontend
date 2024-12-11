@@ -8,6 +8,7 @@ import { searchResult } from '@/app/lib/all_interface';
 const Search = () => {
     const [results, setResults] = useState<searchResult | null>(null);
     const [currentPage, setCurrentPage] = useState(1); // 添加当前页码状态
+    const [loading, setLoading] = useState(false); // 添加加载状态
     const searchParams = useSearchParams();
     const name = searchParams.get('crate_name');
 
@@ -18,6 +19,7 @@ const Search = () => {
     }, [name, currentPage]); // 当 name 或 currentPage 改变时重新运行
 
     const fetchResults = async (query: string, page: number) => {
+        setLoading(true); // 开始加载数据
         try {
             const response = await fetch('/api/search', {
                 method: 'POST',
@@ -40,6 +42,8 @@ const Search = () => {
             setResults(data); // 假设返回的数据data字段
         } catch (error) {
             console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false); // 数据加载完成
         }
     };
 
@@ -57,12 +61,14 @@ const Search = () => {
 
     console.log("results:", results?.data.items);
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100 flex flex-col">
             <NewHeader />
-            <div className="max-w-2xl ml-10 p-4">
+            <div className="max-w-2xl ml-10 p-4 flex-grow">
                 <div id="results" className="space-y-4">
-                    {results ? (
-                        results.data.total_page > 0 ? (
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : results ? (
+                        results.data.total_page > 0 && results.data.items.length > 0 ? (
                             results.data.items.map((item, index) => (
                                 <Link
                                     key={index}
@@ -83,32 +89,35 @@ const Search = () => {
                         <p>Loading...</p>
                     )}
                 </div>
+            </div>
 
-                {/* 显示当前页数和总页数 */}
+            {/* 当前页数在按钮上方 */}
+            <div className="flex flex-col items-start mt-2 mb-4 custom-margin-left">
                 {results && (
-                    <div className="mt-4 text-center">
+                    <div className="mb-2">
                         <p>
-                            当前页: {currentPage} / 总页数: {results.data.total_page}
+                            Current page: {currentPage} / Total page: {results.data.total_page}
                         </p>
                     </div>
                 )}
-
-                <div className="flex justify-between mt-4">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300"
-                    >
-                        Previous
-                    </button>
-                    <button
-                        onClick={handleNextPage}
-                        disabled={results === null || currentPage >= results.data.total_page}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300"
-                    >
-                        Next
-                    </button>
-                </div>
+                {results && results.data.total_page > 0 && (
+                    <div className="flex">
+                        <button
+                            onClick={handlePreviousPage}
+                            disabled={currentPage === 1}
+                            className="mx-0 px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            onClick={handleNextPage}
+                            disabled={results === null || currentPage >= results.data.total_page}
+                            className="mx-20 px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300"
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -84,7 +84,7 @@ const HomePage: React.FC = () => {
 
 
                 {/* 一些介绍 */}
-                <div className="flex container mx-auto p-10">
+                <div className="relative container mx-auto p-10">
                     <div className="bg-gray-800 p-5 mb-6 rounded shadow-md">
                         <h2 className="text-2xl font-semibold">New features in the deps.dev API</h2>
                         <p className="mt-2">The deps.dev API, which provides free access to the data that powers this website, now has experimental batch and pull support, as well as a new version that comes with a stability guarantee and deprecation policy.</p>
