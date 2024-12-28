@@ -5,8 +5,9 @@ export async function GET(req: NextRequest, props: { params: Params }) {
   try {
     const params = await props.params
     const { nsfront, nsbehind, cratename, version } = params;
+    const endpoint = process.env.CRATES_PRO_INTERNAL_HOST;
 
-    const externalApiUrl = `http://210.28.134.203:6888/api/crates/${nsfront}/${nsbehind}/${cratename}/${version}`; // 替换为你的外部 API URL
+    const externalApiUrl = `${endpoint}/api/crates/${nsfront}/${nsbehind}/${cratename}/${version}`; // 替换为你的外部 API URL
     const externalRes = await fetch(externalApiUrl);
     if (!externalRes.ok) {
       throw new Error('Failed to fetch external data');
