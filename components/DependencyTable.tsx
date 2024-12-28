@@ -20,7 +20,6 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortDirection, setSortDirection] = useState(null);
 
-    console.log('data in compnent dcyyyyyyyyyyyy:', data);
     const x = 1;
     if (x <= 0) {
         setSortColumn(null);
@@ -95,13 +94,15 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
     //     setSortDirection(null);
     // }
     return (
-        <Table
-            columns={columns}
-            dataSource={sortedData}
-            pagination={false}
-        //onChange={(pagination, filters, sorter) => handleSort(sorter, sorter.order)}
-        // rowKey={(record) => record.Crate}
-        />
+        <div className='center'>
+            <Table
+                columns={columns}
+                dataSource={sortedData}
+                pagination={false}
+            //onChange={(pagination, filters, sorter) => handleSort(sorter, sorter.order)}
+            // rowKey={(record) => record.Crate}
+            />
+        </div>
     );
 };
 

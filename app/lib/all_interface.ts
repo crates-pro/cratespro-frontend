@@ -31,7 +31,24 @@ export interface cratesInfo {
         "indirect": number
     },
 
-    "cves": string[],
+    "cves": [
+        {
+            "id": string,
+            "cratename": string,
+            "patched": string,
+            "aliases": string[],
+            "small_desc": string,
+        }
+    ],
+    "dep_cves": [
+        {
+            "id": string,
+            "cratename": string,
+            "patched": string,
+            "aliases": string[],
+            "small_desc": string,
+        }
+    ],
     "license": string,
     "github_url": string,
     "doc_url": string,
