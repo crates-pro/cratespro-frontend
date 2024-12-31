@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, props: { params: Params }) {
       throw new Error('Failed to fetch external data');
     }
     const externalData = await externalRes.json();
-    console.log('crateinfo 11111111', externalData);
+    console.log('crateinfo in api', externalData);
     return NextResponse.json(externalData);
   } catch (error) {
     console.error('Error:', error);

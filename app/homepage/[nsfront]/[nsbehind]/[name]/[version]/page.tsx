@@ -42,7 +42,7 @@ const CratePage = () => {
                     <div className="bg-white shadow rounded-lg p-4">
                         <h2 className="text-lg font-bold mb-2">Security Advisories</h2>
                         <p className="text-gray-500 text-sm">
-                            cve: {results && results.cves && results.cves.length > 0 && results.cves[0] !== '' ? JSON.stringify(results.cves) : 'No results available'}
+                            cve: {results && results.cves && results.cves.length > 0 && true ? JSON.stringify(results.cves) : 'No results available'}
                         </p>
                     </div>
                     {/* Licenses */}

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { useRouter } from 'next/navigation';
+// import { useParams } from 'next/navigation';
 
 export interface GraphDependency {
-    name: string;
+    crate_name: string;
     version: string;
     dependencies?: GraphDependency[];
 }
@@ -21,40 +21,42 @@ interface DependencyLink extends d3.SimulationLinkDatum<DependencyNode> {
 export interface DependencyGraphProps {
     crateName: string;
     currentVersion: string;
-    // dependencies?: GraphDependency;
-}
-
-interface SubDep {
-    name: string;
-    version: string;
 }
 
 const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVersion }) => {
     const [graphDependencies, setGraphDependencies] = useState<GraphDependency | null>(null);
     const d3Container = useRef<HTMLDivElement | null>(null);
-    const router = useRouter();
+    // const params = useParams();
 
     useEffect(() => {
-        async function fetchDependencyTree(name: string, version: string): Promise<GraphDependency> {
-            const response = await fetch(`/api/crates/${name}/${version}`);
-            const versionData = await response.json();
+        async function fetchDependencyTree(name: string, version: string, visited: Set<string>): Promise<GraphDependency> {
+            const nodeId = `${name}@${version}`;
+            if (visited.has(nodeId)) {
+                return { crate_name: name, version, dependencies: [] };
+            }
+            visited.add(nodeId);
 
-            const dependencies = versionData.dependencies || [];
+            const url = `/api/graph/${name}/${version}/direct`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
-            const dependenciesDetails = await Promise.all(dependencies.map(async (subDep: SubDep) => {
-                return fetchDependencyTree(subDep.name, subDep.version);
+            const dependencies = await response.json();
+            const dependenciesDetails = await Promise.all(dependencies.map(async (dep: { name: string; version: string; }) => {
+                return fetchDependencyTree(dep.name, dep.version, visited);
             }));
 
             return {
-                name,
+                crate_name: name,
                 version,
                 dependencies: dependenciesDetails
             };
         }
 
         async function loadDependencies() {
-            const graphDep = await fetchDependencyTree(crateName, currentVersion);
-            console.log(graphDep);
+            const visited = new Set<string>();
+            const graphDep = await fetchDependencyTree(crateName, currentVersion, visited);
             setGraphDependencies(graphDep);
         }
 
@@ -78,7 +80,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         svg.append('defs').append('marker')
             .attr('id', 'arrowhead')
             .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 20) // 增加 refX 以使箭头远离节点
+            .attr('refX', 20)
             .attr('refY', 0)
             .attr('orient', 'auto')
             .attr('markerWidth', 7)
@@ -88,13 +90,11 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
             .attr('fill', '#333')
             .style('stroke', 'none');
 
-
-
         const nodesMap = new Map<string, DependencyNode>();
         const links: DependencyLink[] = [];
 
         function processDependencies(dep: GraphDependency, parent?: DependencyNode) {
-            const nodeId = `${dep.name}@${dep.version}`;
+            const nodeId = `${dep.crate_name}@${dep.version}`;
             let node = nodesMap.get(nodeId);
             if (!node) {
                 node = { id: nodeId, color: parent ? '#69b3a2' : 'red' };
@@ -113,10 +113,10 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         const nodes = Array.from(nodesMap.values());
 
         const simulation = d3.forceSimulation<DependencyNode>(nodes)
-            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(100)) // 增加距离
-            .force('charge', d3.forceManyBody().strength(-500)) // 增加排斥力
+            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(100))
+            .force('charge', d3.forceManyBody().strength(-500))
             .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('collide', d3.forceCollide().radius(50)); // 增加碰撞半径
+            .force('collide', d3.forceCollide().radius(50));
 
         const link = svg.append('g')
             .selectAll('line')
@@ -124,7 +124,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
             .enter().append('line')
             .attr('stroke-width', 2)
             .attr('stroke', '#333')
-            .attr('marker-end', 'url(#arrowhead)'); // 确保引用正确
+            .attr('marker-end', 'url(#arrowhead)');
 
         const node = svg.append('g')
             .selectAll('circle')
@@ -134,10 +134,6 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
             .attr('fill', d => d.color)
             .attr('stroke', '#333')
             .attr('stroke-width', 1.5)
-            .on('click', (event, d) => {
-                const [name, version] = d.id.split('@');
-                router.push(`/programs/${name}/${version}`);
-            })
             .call(d3.drag<SVGCircleElement, DependencyNode>()
                 .on('start', dragstarted)
                 .on('drag', dragged)
@@ -185,8 +181,8 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         }
 
         function dragged(event: d3.D3DragEvent<SVGCircleElement, DependencyNode, DependencyNode>, d: DependencyNode) {
-            d.fx = Math.max(10, Math.min(width - 10, event.x));
-            d.fy = Math.max(10, Math.min(height - 10, event.y));
+            d.fx = event.x;
+            d.fy = event.y;
         }
 
         function dragended(event: d3.D3DragEvent<SVGCircleElement, DependencyNode, DependencyNode>, d: DependencyNode) {
@@ -195,7 +191,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
             d.fy = null;
         }
 
-    }, [graphDependencies, router]);
+    }, [graphDependencies]);
 
     return (
         <div className="bg-white p-4 mb-2 shadow-lg rounded-lg">
