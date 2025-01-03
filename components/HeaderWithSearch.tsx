@@ -27,6 +27,7 @@ const Header = () => {
         { name: 'Overview', path: '' },
         { name: 'Dependencies', path: '/dependencies' },
         { name: 'Dependents', path: '/dependents' },
+        { name: 'Versions', path: '/versions' },
     ];
 
 
