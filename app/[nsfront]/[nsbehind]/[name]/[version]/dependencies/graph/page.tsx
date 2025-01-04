@@ -48,7 +48,8 @@ const CratePage = () => {
     if (error) return <div className="text-red-500">Error: {error}</div>;
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="w-full h-full p-6">
+
 
 
             <DependencyGraph crateName={params.name as string} currentVersion={params.version as string} />

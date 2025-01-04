@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-// import { useParams } from 'next/navigation';
 
 export interface GraphDependency {
     crate_name: string;
@@ -26,7 +25,6 @@ export interface DependencyGraphProps {
 const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVersion }) => {
     const [graphDependencies, setGraphDependencies] = useState<GraphDependency | null>(null);
     const d3Container = useRef<HTMLDivElement | null>(null);
-    // const params = useParams();
 
     useEffect(() => {
         async function fetchDependencyTree(name: string, version: string, visited: Set<string>): Promise<GraphDependency> {
@@ -112,10 +110,11 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
 
         const nodes = Array.from(nodesMap.values());
 
+        // Remove the forceCenter to allow free movement of nodes
         const simulation = d3.forceSimulation<DependencyNode>(nodes)
             .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(100))
             .force('charge', d3.forceManyBody().strength(-500))
-            .force('center', d3.forceCenter(width / 2, height / 2))
+            // Remove center force to prevent auto centering
             .force('collide', d3.forceCollide().radius(50));
 
         const link = svg.append('g')
@@ -191,11 +190,31 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
             d.fy = null;
         }
 
+        // Zoom functionality
+        //     const zoom = d3.zoom()
+        //         .scaleExtent([0.1, 10])  // Minimum and maximum zoom scales
+        //         .on('zoom', (event) => {
+        //             svg.selectAll('g')
+        //                 .attr('transform', event.transform);
+        //         });
+
+        //     svg.call(zoom as any);
+
+        // }, [graphDependencies]);
+        const zoom = d3.zoom<SVGSVGElement, unknown>()
+            .scaleExtent([0.1, 10])  // Minimum and maximum zoom scales
+            .on('zoom', (event) => {
+                svg.selectAll('g')
+                    .attr('transform', event.transform);
+            });
+
+        svg.call(zoom);  // 不再使用 any
+
     }, [graphDependencies]);
 
     return (
-        <div className="bg-white p-4 mb-2 shadow-lg rounded-lg">
-            <div ref={d3Container} style={{ width: '100%', height: '400px' }} />
+        <div className="bg-white p-4 mb-2 shadow-lg rounded-lg h-screen w-full">
+            <div ref={d3Container} style={{ width: '100%', height: '100%' }} />
         </div>
     );
 };

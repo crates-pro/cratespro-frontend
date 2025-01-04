@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
     const endpoint = process.env.CRATES_PRO_INTERNAL_HOST;
-
     const apiUrl = `${endpoint}/api/search`;
     const requestBody = await request.json();
     console.log("Request Body:", requestBody);
