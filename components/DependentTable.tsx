@@ -19,7 +19,6 @@ const DependencyTable: React.FC<DependentTableProps> = ({ data }) => {
     const [sortDirection, setSortDirection] = useState(null);
 
 
-    // console.log('data in compnent detttttttttttttttttttttts:', data);
     const y = 1;
     if (y <= 0) {
         setSortColumn(null);

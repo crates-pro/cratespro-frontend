@@ -6,7 +6,6 @@ import { useHeaderContext } from '../app/context/CrateContext';
 import { useParams } from 'next/navigation';
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
-// import { cratesInfo } from '@/app/lib/all_interface';
 
 const Header = () => {
     const router = useRouter();
