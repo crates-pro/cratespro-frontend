@@ -24,7 +24,7 @@ const CratePage = () => {
             try {
                 setError(null);
                 const response = await fetch(
-                    `/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`
+                    `/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies/graphpage`
                 );
 
                 if (!response.ok) {
@@ -34,6 +34,7 @@ const CratePage = () => {
                 const data = await response.json();
 
                 setResults(data); // 设置获取的数据
+                console.log('resultssssssss', results);
             } catch (error) {
                 console.log("Error fetching data:", error);
                 setError("Failed to fetch data.");
@@ -52,7 +53,7 @@ const CratePage = () => {
 
 
 
-            <DependencyGraph crateName={params.name as string} currentVersion={params.version as string} />
+            <DependencyGraph />
 
         </div>
     );

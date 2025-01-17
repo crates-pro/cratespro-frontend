@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { useParams } from "next/navigation";
 
 export interface GraphDependency {
-    crate_name: string;
-    version: string;
-    dependencies?: GraphDependency[];
+    name_and_version: string;
+    cve_count: number;
+    direct_dependency?: GraphDependency[];
 }
 
 interface DependencyNode extends d3.SimulationNodeDatum {
@@ -17,55 +18,36 @@ interface DependencyLink extends d3.SimulationLinkDatum<DependencyNode> {
     target: DependencyNode;
 }
 
-export interface DependencyGraphProps {
-    crateName: string;
-    currentVersion: string;
-}
-
-const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVersion }) => {
+const DependencyGraph: React.FC = () => {
     const [graphDependencies, setGraphDependencies] = useState<GraphDependency | null>(null);
     const d3Container = useRef<HTMLDivElement | null>(null);
+    const params = useParams();
 
     useEffect(() => {
-        async function fetchDependencyTree(name: string, version: string, visited: Set<string>): Promise<GraphDependency> {
-            const nodeId = `${name}@${version}`;
-            if (visited.has(nodeId)) {
-                return { crate_name: name, version, dependencies: [] };
+        const fetchDependencyGraph = async () => {
+            try {
+                const response = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies/graphpage`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data: GraphDependency = await response.json();
+                console.log('data in graphhhhhhhhhhhhh', data);
+                setGraphDependencies(data);
+            } catch (error) {
+                console.error('Error fetching dependency graph:', error);
             }
-            visited.add(nodeId);
+        };
 
-            const url = `/api/graph/${name}/${version}/direct`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const dependencies = await response.json();
-            const dependenciesDetails = await Promise.all(dependencies.map(async (dep: { name: string; version: string; }) => {
-                return fetchDependencyTree(dep.name, dep.version, visited);
-            }));
-
-            return {
-                crate_name: name,
-                version,
-                dependencies: dependenciesDetails
-            };
-        }
-
-        async function loadDependencies() {
-            const visited = new Set<string>();
-            const graphDep = await fetchDependencyTree(crateName, currentVersion, visited);
-            setGraphDependencies(graphDep);
-        }
-
-        loadDependencies();
-    }, [crateName, currentVersion]);
+        fetchDependencyGraph();
+    }, [params.nsfront, params.nsbehind, params.name, params.version]);
 
     useEffect(() => {
         if (!graphDependencies || d3Container.current === null) return;
 
-        const width = 800;
-        const height = 600;
+        const containerWidth = Math.max(d3Container.current.clientWidth, 1200);
+        const containerHeight = Math.max(d3Container.current.clientHeight, 800);
+        const width = containerWidth * 1.5;
+        const height = containerHeight * 1.5;
 
         d3.select(d3Container.current).select('svg').remove();
 
@@ -78,11 +60,11 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         svg.append('defs').append('marker')
             .attr('id', 'arrowhead')
             .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 20)
+            .attr('refX', 17)
             .attr('refY', 0)
             .attr('orient', 'auto')
-            .attr('markerWidth', 7)
-            .attr('markerHeight', 7)
+            .attr('markerWidth', 3)
+            .attr('markerHeight', 3)
             .append('path')
             .attr('d', 'M 0,-5 L 10,0 L 0,5')
             .attr('fill', '#333')
@@ -92,17 +74,17 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         const links: DependencyLink[] = [];
 
         function processDependencies(dep: GraphDependency, parent?: DependencyNode) {
-            const nodeId = `${dep.crate_name}@${dep.version}`;
+            const nodeId = `${dep.name_and_version}`;
             let node = nodesMap.get(nodeId);
             if (!node) {
-                node = { id: nodeId, color: parent ? '#69b3a2' : 'red' };
+                node = { id: nodeId, color: parent ? '#5c6470' : '#32e0c4' };
                 nodesMap.set(nodeId, node);
             }
             if (parent) {
                 links.push({ source: parent, target: node });
             }
-            if (dep.dependencies) {
-                dep.dependencies.forEach(subDep => processDependencies(subDep, node));
+            if (dep.direct_dependency) {
+                dep.direct_dependency.forEach(subDep => processDependencies(subDep, node));
             }
         }
 
@@ -110,26 +92,27 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
 
         const nodes = Array.from(nodesMap.values());
 
-        // Remove the forceCenter to allow free movement of nodes
         const simulation = d3.forceSimulation<DependencyNode>(nodes)
-            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(100))
-            .force('charge', d3.forceManyBody().strength(-500))
-            // Remove center force to prevent auto centering
-            .force('collide', d3.forceCollide().radius(50));
+            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(80))
+            .force('charge', d3.forceManyBody().strength(-300))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collide', d3.forceCollide().radius(10));
 
-        const link = svg.append('g')
+        const g = svg.append('g');
+
+        const link = g.append('g')
             .selectAll('line')
             .data(links)
             .enter().append('line')
-            .attr('stroke-width', 2)
+            .attr('stroke-width', 1.5)
             .attr('stroke', '#333')
             .attr('marker-end', 'url(#arrowhead)');
 
-        const node = svg.append('g')
+        const node = g.append('g')
             .selectAll('circle')
             .data(nodes)
             .enter().append('circle')
-            .attr('r', 15)
+            .attr('r', 5)
             .attr('fill', d => d.color)
             .attr('stroke', '#333')
             .attr('stroke-width', 1.5)
@@ -141,7 +124,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
         node.append('title')
             .text(d => d.id);
 
-        const labels = svg.append('g')
+        const labels = g.append('g')
             .attr('class', 'labels')
             .selectAll('text')
             .data(nodes)
@@ -165,8 +148,8 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
                 .attr('y2', d => (d.target as DependencyNode).y!);
 
             node
-                .attr('cx', d => d.x = Math.max(10, Math.min(width - 10, d.x!)))
-                .attr('cy', d => d.y = Math.max(10, Math.min(height - 10, d.y!)));
+                .attr('cx', d => d.x!)
+                .attr('cy', d => d.y!);
 
             labels
                 .attr('x', d => d.x! + 10)
@@ -190,32 +173,30 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ crateName, currentVer
             d.fy = null;
         }
 
-        // Zoom functionality
-        //     const zoom = d3.zoom()
-        //         .scaleExtent([0.1, 10])  // Minimum and maximum zoom scales
-        //         .on('zoom', (event) => {
-        //             svg.selectAll('g')
-        //                 .attr('transform', event.transform);
-        //         });
-
-        //     svg.call(zoom as any);
-
-        // }, [graphDependencies]);
         const zoom = d3.zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.1, 10])  // Minimum and maximum zoom scales
+            .scaleExtent([0.1, 20])
             .on('zoom', (event) => {
-                svg.selectAll('g')
-                    .attr('transform', event.transform);
+                g.attr('transform', event.transform);
             });
 
-        svg.call(zoom);  // 不再使用 any
+        svg.call(zoom);
+        const initialScale = 0.6;
+        svg.call(
+            zoom.transform,
+            d3.zoomIdentity
+                .translate(width / 2, height / 2)
+                .scale(initialScale)
+                .translate(-width / 2, -height / 2)
+        );
 
     }, [graphDependencies]);
 
     return (
-        <div className="bg-white p-4 mb-2 shadow-lg rounded-lg h-screen w-full">
-            <div ref={d3Container} style={{ width: '100%', height: '100%' }} />
-        </div>
+        <div ref={d3Container} style={{
+            width: '100%',
+            height: '90vh',
+            minHeight: '800px'
+        }} />
     );
 };
 

@@ -1,77 +1,59 @@
 'use client';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { useParams } from 'next/navigation';
 
 // 假设后端接口返回的类型
 interface VersionInfo {
     version: string;
-    publishDay: string;
-    dependentsNumber: number;
+    dependents: number; // 保持原始字段以便从API获取
 }
 
-interface VersionsTableProps {
-    data: string[] | undefined; // 传入的版本号数组
+// 新增 PublishDay 接口
+interface FormattedVersionInfo extends VersionInfo {
+    publishDay: string; // 新增字段
 }
 
-const VersionsTable: React.FC<VersionsTableProps> = ({ data }) => {
-    const [versionsData, setVersionsData] = useState<VersionInfo[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+const VersionsTable: React.FC = () => {
+    const [versionsData, setVersionsData] = useState<FormattedVersionInfo[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
     const params = useParams();
 
-    // 获取版本发布日的函数
-    const fetchPublishDay = useCallback(async (version: string) => {
-        try {
-            const response = await fetch(`/api/publish-day/${version}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch publish day');
-            }
-            const data = await response.json();
-            return data.publishDay || 'N/A'; // 如果没有返回值，则默认返回 'N/A'
-        } catch (error) {
-            console.error('Error fetching publish day:', error);
-            return 'N/A'; // 请求失败时返回默认值
-        }
-    }, []);
-
-    // 获取版本依赖数的函数
-    const fetchDependentsNumber = useCallback(async (version: string) => {
-        try {
-            const response = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${version}/dependents`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch dependents number');
-            }
-            const data = await response.json();
-            return data.direct_count + data.indirect_count || 0; // 如果没有返回值，则默认返回 0
-        } catch (error) {
-            console.error('Error fetching dependents number:', error);
-            return 0; // 请求失败时返回默认值
-        }
-    }, [params.nsfront, params.nsbehind, params.name]);
-
-    // 请求版本的发布日和依赖数
-    const fetchVersionDetails = useCallback(async (version: string) => {
-        const publishDay = await fetchPublishDay(version);
-        const dependentsNumber = await fetchDependentsNumber(version);
-        return { version, publishDay, dependentsNumber };
-    }, [fetchPublishDay, fetchDependentsNumber]);
-
     useEffect(() => {
-        const fetchData = async () => {
-            if (data && data.length > 0) {
-                setLoading(true);
-                const versionDetails = await Promise.all(
-                    data.map(async (version) => {
-                        return await fetchVersionDetails(version);
-                    })
-                );
-                setVersionsData(versionDetails);
-                setLoading(false);
+        const fetchVersionsData = async () => {
+            try {
+                const response = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/versions`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data: VersionInfo[] = await response.json();
+
+                // 检查数据是否有效
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid data format');
+                }
+
+                // 将 API 数据转换为 Table 需要的格式
+                const formattedData = data.map((item) => ({
+                    version: item.version,
+                    dependents: item.dependents, // 保留依赖数
+                    publishDay: 'N/A', // 设置默认发布日为 N/A
+                }));
+
+                setVersionsData(formattedData); // 设置获取的数据
+            } catch (error) {
+                setError(error instanceof Error ? error.message : 'An unknown error occurred'); // 改进错误处理
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false); // 完成加载
             }
         };
 
-        fetchData();
-    }, [data, fetchVersionDetails]);
+        fetchVersionsData(); // 调用函数来获取数据
+    }, [params.nsfront, params.nsbehind, params.name, params.version]); // 依赖项数组
 
     const columns = [
         {
@@ -82,17 +64,20 @@ const VersionsTable: React.FC<VersionsTableProps> = ({ data }) => {
         },
         {
             title: 'Publish Day',
-            dataIndex: 'publishDay',
-            key: 'publishDay',
+            dataIndex: 'publishDay', // 修改为使用 publishDay
+            key: 'publishDay', // 修改为使用 publishDay
             render: (text: string) => <span>{text}</span>,
         },
         {
             title: 'Dependents Number',
-            dataIndex: 'dependentsNumber',
-            key: 'dependentsNumber',
+            dataIndex: 'dependents',
+            key: 'dependents',
             render: (text: number) => <span>{text}</span>,
         },
     ];
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div className="text-red-500">Error: {error}</div>;
 
     return (
         <Table
