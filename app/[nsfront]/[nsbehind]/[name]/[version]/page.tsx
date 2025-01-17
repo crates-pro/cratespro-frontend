@@ -30,7 +30,7 @@ const CratePage = () => {
 
         fetchCrateData();
     }, [params.name, params.version, params.nsfront, params.nsbehind]);
-
+    console.log('results in overviewwwwwwwww:', results);
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
@@ -92,7 +92,7 @@ const CratePage = () => {
 
                         <h3 className="text-xl mt-10">In the dependencies</h3>
                         <div>
-                            {results && results.cves && results.cves.length > 0 ? (
+                            {results && results.dep_cves && results.dep_cves.length > 0 ? (
                                 results.dep_cves.map((dep_cves, index) => (
                                     <>
                                         <p key={index} className="text-sm mt-4" style={{ color: 'rgb(179,20,18)' }}>

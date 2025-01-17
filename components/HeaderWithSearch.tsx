@@ -6,6 +6,7 @@ import { useHeaderContext } from '../app/context/CrateContext';
 import { useParams } from 'next/navigation';
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
+// import { cratesInfo } from '@/app/lib/all_interface';
 
 const Header = () => {
     const router = useRouter();
@@ -18,17 +19,6 @@ const Header = () => {
 
 
     const [currentVersion, setCurrentVersion] = useState(params.version); // 存储当前选中的版本
-
-    const [activeTab, setActiveTab] = useState('overview'); // 默认选中 Overview
-    // console.log('pathhhhhhhhhhhhhhhhhhhhhhhhhhhh:', params);
-    // 定义导航项数据
-    const navItems = [
-        { name: 'Overview', path: '' },
-        { name: 'Dependencies', path: '/dependencies' },
-        { name: 'Dependents', path: '/dependents' },
-        { name: 'Versions', path: '/versions' },
-    ];
-
 
     const handleKeyPress = (e: { key: string; }) => {
         // 检查是否按下了回车键
@@ -52,20 +42,6 @@ const Header = () => {
     useEffect(() => {
         const path = params.path || ''; // 确保有值
         console.log('path:', path);
-        switch (path) {
-            case '':
-                setActiveTab('overview');
-                break;
-            case 'dependencies':
-                setActiveTab('dependencies');
-                break;
-            case 'dependents':
-                setActiveTab('dependents');
-                break;
-            default:
-                setActiveTab('overview');
-                break;
-        }
     }, [params.path]); // 依赖于 params.path
     // 使用 useEffect 从 API 获取数据
     useEffect(() => {
@@ -142,7 +118,6 @@ const Header = () => {
                                                         key={index}
                                                         onClick={() => {
                                                             setCurrentVersion(version);
-                                                            setActiveTab('overview'); // 更新导航条为 Overview
                                                         }}
                                                         href={`/${params.nsfront}/${params.nsbehind}/${crateData.results?.crate_name}/${version}`}
                                                     >
@@ -166,43 +141,15 @@ const Header = () => {
                             placeholder="Search for open source crates"
                             className="p-2 border-none rounded-md text-gray-800 w-80 max-w-2xl"
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)} // 更新搜索内容
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleKeyPress}
                         />
-                        {/* <Link href={{
-                        pathname: '/homepage/search',
-                        query: {
-                            crate_name: searchQuery, // 将搜索内容作为参数传递给新页面
-                        },
-                    }}> */}
-                        <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700 "
+                        <button className="bg-teal-600 text-white rounded-md p-2 ml-2 hover:bg-teal-700"
                             onClick={performSearch}
                         >
                             Search</button>
-                        {/* </Link> */}
                     </div>
                 </div>
-                <nav className="mt-4">
-                    <ul className="flex space-x-4 text-gray-500 relative">
-                        {navItems.map((item) => (
-                            <li
-                                key={item.name}
-                                className="cursor-pointer relative"
-                                onClick={() => setActiveTab(item.name.toLowerCase())} // 设置当前选中的导航项
-                            >
-                                <Link href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}${item.path}`}>
-                                    <div className={`block py-2 relative z-10 ${activeTab === item.name.toLowerCase() ? 'text-blue-500' : ''}`}>
-                                        {item.name}
-                                    </div>
-                                </Link>
-                                {activeTab === item.name.toLowerCase() && (
-                                    <div className="absolute bottom-0 left-0 w-full h-1 bg-blue-500"></div>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-
             </header>
         </>
 
