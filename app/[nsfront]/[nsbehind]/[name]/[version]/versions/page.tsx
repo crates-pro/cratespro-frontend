@@ -20,6 +20,7 @@ interface VersionInfo {
 const CratePage = () => {
     const [results, setResults] = useState<VersionInfo[] | undefined>(undefined);
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState(null);
 
     const params = useParams();
