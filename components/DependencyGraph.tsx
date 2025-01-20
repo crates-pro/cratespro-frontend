@@ -11,6 +11,7 @@ export interface GraphDependency {
 interface DependencyNode extends d3.SimulationNodeDatum {
     id: string;
     color: string;
+    cve_count: number;
 }
 
 interface DependencyLink extends d3.SimulationLinkDatum<DependencyNode> {
@@ -60,11 +61,11 @@ const DependencyGraph: React.FC = () => {
         svg.append('defs').append('marker')
             .attr('id', 'arrowhead')
             .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 17)
+            .attr('refX', 8)
             .attr('refY', 0)
             .attr('orient', 'auto')
-            .attr('markerWidth', 3)
-            .attr('markerHeight', 3)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
             .append('path')
             .attr('d', 'M 0,-5 L 10,0 L 0,5')
             .attr('fill', '#333')
@@ -77,7 +78,21 @@ const DependencyGraph: React.FC = () => {
             const nodeId = `${dep.name_and_version}`;
             let node = nodesMap.get(nodeId);
             if (!node) {
-                node = { id: nodeId, color: parent ? '#5c6470' : '#32e0c4' };
+                const getColorByCveCount = (count: number) => {
+                    if (count === 0) return '#2ecc71';  // 绿色
+                    if (count >= 10) return '#8b0000';  // 深红色
+                    if (count >= 6) return '#e74c3c';   // 红色
+                    if (count >= 3) return '#e67e22';   // 橙色
+                    if (count >= 1) return '#f1c40f';   // 黄色
+                    return '#2ecc71';  // 默认绿色
+                };
+
+                const nodeColor = !parent ? '#32e0c4' : getColorByCveCount(dep.cve_count);
+                node = {
+                    id: nodeId,
+                    color: nodeColor,
+                    cve_count: dep.cve_count
+                };
                 nodesMap.set(nodeId, node);
             }
             if (parent) {
@@ -96,7 +111,7 @@ const DependencyGraph: React.FC = () => {
             .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(80))
             .force('charge', d3.forceManyBody().strength(-300))
             .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('collide', d3.forceCollide().radius(10));
+            .force('collide', d3.forceCollide().radius(15));
 
         const g = svg.append('g');
 
@@ -106,13 +121,25 @@ const DependencyGraph: React.FC = () => {
             .enter().append('line')
             .attr('stroke-width', 1.5)
             .attr('stroke', '#333')
-            .attr('marker-end', 'url(#arrowhead)');
+            .attr('marker-end', 'url(#arrowhead)')
+            .attr('x2', function (d) {
+                const dx = (d.target as DependencyNode).x! - (d.source as DependencyNode).x!;
+                const dy = (d.target as DependencyNode).y! - (d.source as DependencyNode).y!;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                return dist === 0 ? 0 : (d.target as DependencyNode).x! - (dx * 15 / dist);
+            })
+            .attr('y2', function (d) {
+                const dx = (d.target as DependencyNode).x! - (d.source as DependencyNode).x!;
+                const dy = (d.target as DependencyNode).y! - (d.source as DependencyNode).y!;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                return dist === 0 ? 0 : (d.target as DependencyNode).y! - (dy * 15 / dist);
+            });
 
         const node = g.append('g')
             .selectAll('circle')
             .data(nodes)
             .enter().append('circle')
-            .attr('r', 5)
+            .attr('r', 8)
             .attr('fill', d => d.color)
             .attr('stroke', '#333')
             .attr('stroke-width', 1.5)
@@ -144,8 +171,18 @@ const DependencyGraph: React.FC = () => {
             link
                 .attr('x1', d => (d.source as DependencyNode).x!)
                 .attr('y1', d => (d.source as DependencyNode).y!)
-                .attr('x2', d => (d.target as DependencyNode).x!)
-                .attr('y2', d => (d.target as DependencyNode).y!);
+                .attr('x2', function (d) {
+                    const dx = (d.target as DependencyNode).x! - (d.source as DependencyNode).x!;
+                    const dy = (d.target as DependencyNode).y! - (d.source as DependencyNode).y!;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    return dist === 0 ? 0 : (d.target as DependencyNode).x! - (dx * 15 / dist);
+                })
+                .attr('y2', function (d) {
+                    const dx = (d.target as DependencyNode).x! - (d.source as DependencyNode).x!;
+                    const dy = (d.target as DependencyNode).y! - (d.source as DependencyNode).y!;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    return dist === 0 ? 0 : (d.target as DependencyNode).y! - (dy * 15 / dist);
+                });
 
             node
                 .attr('cx', d => d.x!)
