@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
             window.location.href = `/search?crate_name=${searchQuery}`;
         }
     };
-
+    console.log("test for build 1111111111111");
 
 
     return (
