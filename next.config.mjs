@@ -4,4 +4,14 @@
 export default {
     output: "standalone",
     reactStrictMode: true,
+    // async redirects() {
+    //     return [
+    //         {
+    //             source: '/',
+
+    //             destination: '/hompage',
+    //             permanent: false,
+    //         },
+    //     ];
+    // },
 };
