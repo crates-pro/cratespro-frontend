@@ -43,7 +43,7 @@ const CratePage = () => {
             }
         };
         fetchCrateData(); // 调用函数来获取数据
-    }, [params.name, params.version, params.nsfront, params.nsbehind]); // 依赖项数组，确保在 crateName 或 version 改变时重新获取数据
+    },); // 依赖项数组，确保在 crateName 或 version 改变时重新获取数据
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div className="text-red-500">Error: {error}</div>;

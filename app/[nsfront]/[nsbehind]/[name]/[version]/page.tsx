@@ -4,12 +4,161 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { cratesInfo } from '@/app/lib/all_interface';
 import { useParams } from 'next/navigation';
+import { Pagination } from 'antd';
+
+interface CVE {
+    subtitle?: string;
+    id?: string;
+    reported?: string;
+    issued?: string;
+    package?: string;
+    ttype?: string;
+    aliases?: string | string[];
+    keywords?: string;
+    patched?: string;
+    unaffected?: string;
+    url?: string;
+    reference?: string;
+    description?: string;
+}
+
+const CveCard = ({ cve }: { cve: CVE }) => (
+    <div className="bg-white p-4 rounded-lg border border-gray-200">
+        {/* 标题和ID */}
+        <div className="mb-2">
+            <p className="text-red-600 font-medium">
+                {cve.subtitle || 'No subtitle available'}
+            </p>
+            <p className="text-gray-600">
+                {cve.id || 'No ID available'}
+            </p>
+        </div>
+
+        {/* 时间信息 */}
+        <div className=" mb-2 ">
+            <div>
+                <span className="font-medium text-gray-500 mr-4">Reported </span>
+                <span className="text-gray-600">{cve.reported || 'Not specified'}</span>
+            </div>
+
+        </div>
+
+        {/* 时间信息 */}
+        <div className="mb-2">
+            <span className="font-medium text-gray-500 mr-4">Issued </span>
+            <span className="text-gray-600">{cve.issued || 'Not specified'}</span>
+        </div>
+
+
+
+        {/* 包信息 */}
+        <div className="mb-2">
+            <span className="text-sm font-medium text-gray-500 mr-4">Package </span>
+            <span className="text-gray-600">{cve.package || 'No package info'}</span>
+        </div>
+
+
+
+
+        {/* 类型信息 */}
+        {cve.ttype && (
+            <div className="mb-2 ">
+                <span className="text-sm font-medium text-gray-500 mr-4">Type </span>
+                <span className="text-gray-600">{cve.ttype}</span>
+            </div>
+        )}
+
+
+        {/* 别名信息 */}
+        {cve.aliases && (
+            <div className="mb-2">
+                <span className="text-sm font-medium text-gray-500 mr-4">Aliases </span>
+                <span className="text-gray-600">{Array.isArray(cve.aliases) ? cve.aliases.join(', ') : cve.aliases}</span>
+            </div>
+
+        )}
+
+        {/* 关键词 */}
+        {cve.keywords && (
+            <div className="mb-2">
+                <span className="text-sm font-medium text-gray-500 mr-4">Keywords </span>
+                <span className="text-gray-600">{cve.keywords}</span>
+            </div>
+        )}
+
+
+        {/* 修复状态 */}
+        {cve.patched && (
+            <div className="mb-2">
+                <span className="text-sm font-medium text-gray-500 mr-4">Patched </span>
+                <span className="text-gray-600">{cve.patched}</span>
+            </div>
+
+        )}
+
+        {/* 未受影响版本 */}
+        {cve.unaffected && (
+            <div className="mb-2">
+                <span className="text-sm font-medium text-gray-500 mr-4">Unaffected </span>
+                <span className="text-gray-600">{cve.unaffected}</span>
+            </div>
+
+        )}
+
+        {/* URL */}
+        {cve.url && (
+            <div className="mb-2">
+                <span className="text-sm font-medium text-gray-500 mr-4">Url </span>
+                <a
+                    href={cve.url}
+
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline break-all"
+                >
+                    {cve.url}
+                </a>
+            </div>
+        )}
+
+        {/* 引用链接 */}
+        {cve.reference && (
+            <div className="mb-2">
+                <p className="text-sm font-medium text-gray-500">Reference</p>
+                <div className="text-blue-500 hover:underline break-all">
+                    {cve.reference.split(' ').map((url: string, i: number) => (
+                        <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block"
+                        >
+                            {url}
+                        </a>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        {/* 描述信息 */}
+        {cve.description && (
+            <div className="mb-2">
+                <p className="text-sm font-medium text-gray-500">Description</p>
+                <p className="text-gray-600">{cve.description}</p>
+            </div>
+        )}
+    </div>
+);
 
 const CratePage = () => {
     const params = useParams();
     const [results, setResults] = useState<cratesInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [packageCurrentPage, setPackageCurrentPage] = useState(1);
+    const [depCurrentPage, setDepCurrentPage] = useState(1);
+    const itemsPerPage = 1;
 
     useEffect(() => {
         const fetchCrateData = async () => {
@@ -20,6 +169,7 @@ const CratePage = () => {
                 }
                 const data = await response.json();
                 setResults(data);
+                console.log('data in overviewwwwwwwww:', data);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError('An error occurred');
@@ -34,84 +184,109 @@ const CratePage = () => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
+    // 计算当前页的 CVE 数据
+    const getCurrentPageItems = (items: CVE[], currentPage: number) => {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        return items.slice(start, end);
+    };
+
     return (
         <div style={{ width: '90%', margin: '0 auto' }}>
             <div className="my-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-6">
 
-                    {/* Security Advisories */}
+                    {/* Security Advisories 主框 */}
                     <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300">
-
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-3xl mb-2">Security Advisories</h2>
-                            <span
-                                className="text-white border border-gray-300 p-1 w-auto rounded inline-block "
-                                style={{ backgroundColor: 'rgb(179, 20, 18)' }}
-                            >
-                                {results ? results.cves.length + results.dep_cves.length : 0}
-                            </span>
-                        </div>
-                        <h3 className="text-xl mt-3">In this package</h3>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <div style={{ flex: 1 }}>
-                                {results && results.cves && results.cves.length > 0 ? (
-                                    results.cves.map((cve, index) => (
-                                        <div key={index}>
-                                            <p className="text-sm mt-4" style={{ color: 'rgb(179,20,18)' }}>
-                                                {cve.id !== '' ? JSON.stringify(cve.small_desc) : 'No results available'}
-                                            </p>
-                                            <p className="text-grey-500 text-sm mt-0">
-                                                {cve.id !== '' ? JSON.stringify(cve.id) : 'No results available'}
-                                            </p>
-
-                                            <p key={index} className="text-grey-500 text-sm ml-8">
-                                                <div className='mt-0'>SIMILAR ADVISORIES</div>
-                                                {cve.id !== '' ? JSON.stringify(cve.aliases) : 'No results available'}
-                                            </p>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p>No results available</p>
-                                )}
+                        {/* Security Advisories 标题 */}
+                        <div className="mb-6">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-3xl">Security Advisories</h2>
+                                <span
+                                    className="text-white px-3 py-1 rounded-full text-sm"
+                                    style={{
+                                        backgroundColor: results && (results.cves?.length + results.dep_cves?.length) > 0
+                                            ? 'rgb(179, 20, 18)'
+                                            : 'rgb(34, 197, 94)'
+                                    }}
+                                >
+                                    {results ? (results.cves?.length || 0) + (results.dep_cves?.length || 0) : 0}
+                                </span>
                             </div>
-                            {/* <button
-                                style={{
-                                    marginLeft: '20px',
-                                    border: '1px solid blue',
-                                    color: 'blue',
-                                    backgroundColor: 'white',
-                                    padding: '10px 15px',
-                                    cursor: 'pointer'
-                                }}
-                                onClick={() => window.location.href = 'YOUR_LINK_HERE'}>
-                                MORE DETAILS
-                            </button> */}
                         </div>
 
+                        {/* 两个子框的容器 */}
+                        <div className="space-y-6">
+                            {/* In this package 框 */}
+                            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-semibold">In this package</h3>
+                                    <span className="text-white px-3 py-1 rounded-full text-sm"
+                                        style={{ backgroundColor: (results?.cves && results.cves.length > 0) ? 'rgb(179, 20, 18)' : 'rgb(34, 197, 94)' }}>
+                                        {results?.cves?.length || 0}
+                                    </span>
+                                </div>
+                                <div className="space-y-4">
+                                    {results?.cves && results.cves.length > 0 ? (
+                                        <>
+                                            {getCurrentPageItems(results.cves, packageCurrentPage).map((cve, index) => (
+                                                <CveCard key={index} cve={cve} />
+                                            ))}
+                                            {results.cves.length > itemsPerPage && (
+                                                <div className="mt-4 flex justify-center">
+                                                    <Pagination
+                                                        current={packageCurrentPage}
+                                                        onChange={setPackageCurrentPage}
+                                                        total={results.cves.length}
+                                                        pageSize={itemsPerPage}
+                                                        size="small"
+                                                        showSizeChanger={false}
+                                                        simple
+                                                    />
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p className="text-gray-500">No vulnerabilities found</p>
+                                    )}
+                                </div>
+                            </div>
 
-
-                        <h3 className="text-xl mt-10">In the dependencies</h3>
-                        <div>
-                            {results && results.dep_cves && results.dep_cves.length > 0 ? (
-                                results.dep_cves.map((dep_cves, index) => (
-                                    <>
-                                        <p key={index} className="text-sm mt-4" style={{ color: 'rgb(179,20,18)' }}>
-                                            {dep_cves.id !== '' ? JSON.stringify(dep_cves.small_desc) : 'No results available'}
-                                        </p>
-                                        <p key={index} className="text-grey-500 text-sm mt-1">
-                                            {dep_cves.id !== '' ? JSON.stringify(dep_cves.id) : 'No results available'}
-                                        </p>
-                                        <p key={index} className="text-grey-500 text-sm ml-8">
-                                            <div className='mt-0'>SIMILAR ADVISORIES</div>
-                                            {dep_cves.id !== '' ? JSON.stringify(dep_cves.aliases) : 'No results available'}
-                                        </p>
-                                    </>
-                                ))
-                            ) : (
-                                <p>No results available</p>
-                            )}
+                            {/* In the dependencies 框 */}
+                            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-semibold">In the dependencies</h3>
+                                    <span className="text-white px-3 py-1 rounded-full text-sm"
+                                        style={{ backgroundColor: results && results.dep_cves && results.dep_cves.length > 0 ? 'rgb(179, 20, 18)' : 'rgb(34, 197, 94)' }}>
+                                        {results?.dep_cves?.length || 0}
+                                    </span>
+                                </div>
+                                <div className="space-y-4">
+                                    {results?.dep_cves && results.dep_cves.length > 0 ? (
+                                        <>
+                                            {getCurrentPageItems(results.dep_cves, depCurrentPage).map((cve, index) => (
+                                                <CveCard key={index} cve={cve} />
+                                            ))}
+                                            {results.dep_cves.length > itemsPerPage && (
+                                                <div className="mt-4 flex justify-center">
+                                                    <Pagination
+                                                        current={depCurrentPage}
+                                                        onChange={setDepCurrentPage}
+                                                        total={results.dep_cves.length}
+                                                        pageSize={itemsPerPage}
+                                                        size="small"
+                                                        showSizeChanger={false}
+                                                        simple
+                                                    />
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p className="text-gray-500">No vulnerabilities found</p>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-
                     </div>
 
                     {/* Licenses */}

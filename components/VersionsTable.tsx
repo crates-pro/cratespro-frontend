@@ -63,13 +63,13 @@ const VersionsTable: React.FC = () => {
             render: (text: string) => <span>{text}</span>,
         },
         {
-            title: 'Publish Day',
+            title: 'Published',
             dataIndex: 'publishDay', // 修改为使用 publishDay
             key: 'publishDay', // 修改为使用 publishDay
             render: (text: string) => <span>{text}</span>,
         },
         {
-            title: 'Dependents Number',
+            title: 'Dependents',
             dataIndex: 'dependents',
             key: 'dependents',
             render: (text: number) => <span>{text}</span>,
