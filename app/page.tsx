@@ -5,6 +5,9 @@ import Link from 'next/link';
 // import VulnerabilityList from '@/components/CveList';
 import { message } from 'antd';
 import Image from 'next/image';
+import SignIn from '@/components/sign-in';
+import { SessionProvider } from "next-auth/react"
+
 
 const HomePage: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -49,13 +52,15 @@ const HomePage: React.FC = () => {
                         </div>
                     </Link>
 
-                    <nav>
+                    <nav className="flex items-center gap-6">
                         <ul className="flex space-x-5">
-
                             <li><a href="#" className="hover:underline">About</a></li>
                             <li><a href="#" className="hover:underline">Documentation</a></li>
                             <li><a href="#" className="hover:underline">Blog</a></li>
                         </ul>
+                        <SessionProvider>
+                            <SignIn />
+                        </SessionProvider>
                     </nav>
                 </header>
                 {/* 搜索部分 */}

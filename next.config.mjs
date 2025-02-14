@@ -4,14 +4,7 @@
 export default {
     output: "standalone",
     reactStrictMode: true,
-    // async redirects() {
-    //     return [
-    //         {
-    //             source: '/',
-
-    //             destination: '/hompage',
-    //             permanent: false,
-    //         },
-    //     ];
-    // },
+    images: {
+        domains: ['avatars.githubusercontent.com'], // 允许 GitHub 头像
+    },
 };
