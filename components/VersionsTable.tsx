@@ -7,11 +7,15 @@ import { useParams } from 'next/navigation';
 interface VersionInfo {
     version: string;
     dependents: number; // 保持原始字段以便从API获取
+    updated_at: string; // 新增字段
+    downloads: string;
+
 }
 
 // 新增 PublishDay 接口
 interface FormattedVersionInfo extends VersionInfo {
-    publishDay: string; // 新增字段
+    updated_at: string; // 新增字段
+    downloads: string;
 }
 
 const VersionsTable: React.FC = () => {
@@ -40,7 +44,8 @@ const VersionsTable: React.FC = () => {
                 const formattedData = data.map((item) => ({
                     version: item.version,
                     dependents: item.dependents, // 保留依赖数
-                    publishDay: 'N/A', // 设置默认发布日为 N/A
+                    updated_at: item.updated_at, // 设置默认发布日为 N/A
+                    downloads: item.downloads, // 设置默认下载数为 N/A
                 }));
 
                 setVersionsData(formattedData); // 设置获取的数据
@@ -63,9 +68,15 @@ const VersionsTable: React.FC = () => {
             render: (text: string) => <span>{text}</span>,
         },
         {
-            title: 'Published',
-            dataIndex: 'publishDay', // 修改为使用 publishDay
-            key: 'publishDay', // 修改为使用 publishDay
+            title: 'Updated_at',
+            dataIndex: 'updated_at', // 修改为使用 publishDay
+            key: 'updated_at', // 修改为使用 publishDay
+            render: (text: string) => <span>{text}</span>,
+        },
+        {
+            title: 'Downloads',
+            dataIndex: 'downloads', // 修改为使用 publishDay
+            key: 'downloads', // 修改为使用 publishDay
             render: (text: string) => <span>{text}</span>,
         },
         {

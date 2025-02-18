@@ -4,11 +4,31 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Tabs } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function ProfilePage() {
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState('1');
+
+    useEffect(() => {
+        if (session) {
+            // 提交 session 到后端
+            fetch('http://210.28.134.203:31688', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(session),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('成功提交 session:', data);
+                })
+                .catch(error => {
+                    console.error('提交 session 失败:', error);
+                });
+        }
+    }, [session]); // 依赖于 session
 
     if (!session) {
         return (
@@ -19,7 +39,7 @@ export default function ProfilePage() {
             </div>
         );
     }
-
+    console.log('session in profile page !!!!!!!!', session);
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Top bar: Return Home button on the left, Profile Info on the right */}
