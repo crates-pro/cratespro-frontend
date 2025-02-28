@@ -107,3 +107,48 @@ export interface cveListInfo {
         },
     ]
 }
+
+//六、用户github信息接口
+export interface userinfo {
+    user: {
+        "email": string,
+        "image": string,
+        "name": string,
+    }
+    expires: string
+}
+
+
+//用户个人主页接口
+export interface profile {
+    upload_crates:
+    [
+        {
+            "name": string,
+            "time": string,
+        },
+        {
+            "name": string,
+            "time": string,
+        },
+    ]
+
+}
+
+export interface profileResult {
+
+    "data": [
+        {
+            "name": string,
+            "time": string,
+        },
+        {
+            "name": string,
+            "time": string,
+        },
+    ]
+
+
+}
+
+

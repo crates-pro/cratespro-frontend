@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-    const apiUrl = process.env.API_URL; // 读取环境变量
+    const endpoint = process.env.CRATES_PRO_INTERNAL_HOST;
+    const apiUrl = `${endpoint}/api/submitCrate`;
     const formData = await request.formData(); // 解析请求体
 
     console.log("Request FormData:", formData);
