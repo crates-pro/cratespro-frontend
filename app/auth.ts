@@ -1,9 +1,6 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
-import { setupGlobalFetch } from "@/proxy-config"
-
-// 设置全局代理（如果启用）
-setupGlobalFetch();
+// import { getProxyConfig } from "@/proxy-config"
 
 // 打印环境变量（开发环境调试用）
 console.log('Environment Config:', {
