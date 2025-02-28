@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +9,28 @@ import type { MenuProps } from 'antd';
 
 export default function SignInButton() {
     const { data: session, status } = useSession();
+
+    useEffect(() => {
+        if (session) {
+            // 提交 session 到后端
+            fetch('api/submitUserinfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('成功提交 session:', data);
+                })
+                .catch(error => {
+                    console.error('提交 session 失败:', error);
+                });
+        }
+    }, [session]); // 依赖于 session
 
     if (status === 'loading') {
         return (
@@ -21,7 +44,7 @@ export default function SignInButton() {
         const items: MenuProps['items'] = [
             {
                 key: '1',
-                label: <Link href="/profile">个人中心</Link>,
+                label: <Link href={`/profile/${session.user?.name}`}>个人中心</Link>,
             },
             {
                 key: '2',
@@ -51,7 +74,10 @@ export default function SignInButton() {
 
     return (
         <button
-            onClick={() => signIn('github')}
+            onClick={async () => {
+
+                await signIn("github")
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors duration-200"
         >
             <svg
