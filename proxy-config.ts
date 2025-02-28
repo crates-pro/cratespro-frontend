@@ -49,6 +49,20 @@ export function setupGlobalFetch() {
     if (typeof globalThis !== 'undefined' && globalThis.fetch && isEnabled && httpsAgent) {
         const originalFetch = globalThis.fetch;
         globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+            // 将 input 转换为 URL 对象以检查 hostname
+            let url: URL;
+            try {
+                url = input instanceof URL ? input : new URL(input.toString());
+                console.log('url.hostname!!!!!!!!!!:', url.hostname);
+                // 如果是内部服务地址，不使用代理
+                if (url.hostname === '172.17.0.1') {
+                    return originalFetch(input, init);
+                }
+            } catch (error) {
+                console.warn('URL parsing failed:', error);
+                // URL 解析失败时使用默认代理配置
+            }
+
             const extendedInit: ExtendedRequestInit = {
                 ...init,
                 agent: httpsAgent,
