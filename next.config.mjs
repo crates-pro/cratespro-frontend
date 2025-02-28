@@ -5,6 +5,13 @@ export default {
     output: "standalone",
     reactStrictMode: true,
     images: {
-        domains: ['avatars.githubusercontent.com'], // 允许 GitHub 头像
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+                port: '',
+                pathname: '/**',
+            },
+        ],
     },
 };
