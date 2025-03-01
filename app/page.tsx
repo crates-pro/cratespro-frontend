@@ -24,6 +24,7 @@ const HomePage: React.FC = () => {
         if (!searchQuery || searchQuery.trim() === '') {
 
             messageApi.warning('请输入搜索内容');
+            //test for review
             //alert("请输入搜索内容"); // 可选：提示用户输入内容
         }
         if (searchQuery.trim()) {
