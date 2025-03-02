@@ -1,5 +1,10 @@
 import { HttpsProxyAgent } from "https-proxy-agent"
-import { setGlobalDispatcher, ProxyAgent as UndiciProxyAgent } from 'undici'
+import { setGlobalDispatcher, ProxyAgent as UndiciProxyAgent, Dispatcher } from 'undici'
+
+// 保存原始的 dispatcher 以便恢复
+let originalDispatcher: Dispatcher | null = null;
+// 代理状态标志
+let proxyEnabled = false;
 
 // 代理配置类型
 export type ProxyConfig = {
@@ -12,8 +17,18 @@ export type ProxyConfig = {
 export function getProxyConfig(): ProxyConfig {
     const proxyUrl = process.env.HTTPS_PROXY;
 
-    if (!proxyUrl) {
+    if (!proxyUrl || !proxyEnabled) {
         return { isEnabled: false };
+    }
+
+    // 保存当前的 dispatcher 如果还没保存
+    if (!originalDispatcher) {
+        try {
+            // @ts-ignore - 获取当前的 dispatcher
+            originalDispatcher = globalThis[Symbol.for('undici.globalDispatcher.1')];
+        } catch (e) {
+            console.warn('Failed to save original dispatcher:', e);
+        }
     }
 
     // 配置 undici 代理
@@ -36,39 +51,93 @@ export function getProxyConfig(): ProxyConfig {
     };
 }
 
+// 启用代理
+export function enableProxy() {
+    console.log('Enabling proxy for GitHub OAuth...');
+    proxyEnabled = true;
+    return getProxyConfig();
+}
+
+// 禁用代理
+export function disableProxy() {
+    console.log('Disabling proxy...');
+    proxyEnabled = false;
+
+    try {
+        // 恢复原始的 dispatcher
+        if (originalDispatcher) {
+            try {
+                setGlobalDispatcher(originalDispatcher);
+                console.log('Restored original dispatcher');
+            } catch (e) {
+                console.warn('Failed to restore original dispatcher:', e);
+                // 创建一个新的默认 dispatcher
+                setGlobalDispatcher(new UndiciProxyAgent({ uri: '' }));
+            }
+        } else {
+            // 如果没有原始 dispatcher，创建一个新的默认 dispatcher
+            setGlobalDispatcher(new UndiciProxyAgent({ uri: '' }));
+        }
+
+        // 重置全局 fetch 如果它被修改了
+        if (typeof globalThis !== 'undefined' && globalThis.fetch) {
+            // 尝试恢复原始的 fetch
+            try {
+                // @ts-ignore - 访问可能存在的原始 fetch
+                if (globalThis._originalFetch) {
+                    // @ts-ignore
+                    globalThis.fetch = globalThis._originalFetch;
+                    console.log('Restored original fetch');
+                }
+            } catch (e) {
+                console.warn('Failed to restore original fetch:', e);
+            }
+        }
+    } catch (error) {
+        console.error('Error disabling proxy:', error);
+    }
+
+    return { isEnabled: false };
+}
+
 // 扩展的请求配置类型
 export interface ExtendedRequestInit extends RequestInit {
     agent?: HttpsProxyAgent;
     timeout?: number;
 }
 
-// 配置全局 fetch
+// 配置全局 fetch - 不再自动启用代理
 export function setupGlobalFetch() {
-    const { isEnabled, httpsAgent } = getProxyConfig();
-
-    if (typeof globalThis !== 'undefined' && globalThis.fetch && isEnabled && httpsAgent) {
+    // 初始化时不启用代理，只保存原始 fetch
+    if (typeof globalThis !== 'undefined' && globalThis.fetch) {
         const originalFetch = globalThis.fetch;
-        globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-            // 将 input 转换为 URL 对象以检查 hostname
-            let url: URL;
-            try {
-                url = input instanceof URL ? input : new URL(input.toString());
-                console.log('url.hostname!!!!!!!!!!:', url.hostname);
-                // 如果是内部服务地址，不使用代理
-                if (url.hostname === '172.17.0.1') {
-                    return originalFetch(input, init);
-                }
-            } catch (error) {
-                console.warn('URL parsing failed:', error);
-                // URL 解析失败时使用默认代理配置
-            }
+        // 保存原始的 fetch 以便恢复
+        // @ts-ignore
+        globalThis._originalFetch = originalFetch;
 
-            const extendedInit: ExtendedRequestInit = {
-                ...init,
-                agent: httpsAgent,
-                timeout: 60000,
-            };
-            return originalFetch(input, extendedInit as RequestInit);
+        globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+            // 获取当前代理配置
+            const { isEnabled, httpsAgent } = getProxyConfig();
+
+            // 将 input 转换为字符串以检查 URL
+            const inputStr = input instanceof URL ? input.toString() : input.toString();
+
+            // 只有当代理启用且是 GitHub OAuth 相关请求时才使用代理
+            if (isEnabled && (
+                inputStr.includes('github.com/login/oauth') ||
+                inputStr.includes('api.github.com/user')
+            )) {
+                console.log('Using proxy for GitHub OAuth request:', inputStr);
+                const extendedInit: ExtendedRequestInit = {
+                    ...init,
+                    agent: httpsAgent,
+                    timeout: 60000,
+                };
+                return originalFetch(input, extendedInit as RequestInit);
+            } else {
+                // 其他请求不使用代理
+                return originalFetch(input, init);
+            }
         };
     }
 }

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from 'next/image';
+// import Image from 'next/image';
 import Link from 'next/link';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
@@ -32,6 +32,36 @@ export default function SignInButton() {
         }
     }, [session]); // 依赖于 session
 
+    // 处理 GitHub 登录
+    const handleGitHubSignIn = async () => {
+        try {
+            // 先启用代理
+            await fetch('/api/auth/enable-proxy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            console.log('已启用代理用于 GitHub 登录');
+
+            // 然后进行 GitHub 登录
+            await signIn("github");
+        } catch (error) {
+            console.error('登录过程中出错:', error);
+        }
+    };
+
+    // 在组件内部添加一个函数来处理图片 URL
+    // const getProxiedImageUrl = (imageUrl: string) => {
+    //     if (!imageUrl) return '';
+    //     // 检查是否是 GitHub 头像
+    //     if (imageUrl.includes('githubusercontent.com')) {
+    //         return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+    //     }
+    //     return imageUrl;
+    // };
+
     if (status === 'loading') {
         return (
             <button className="bg-gray-200 text-gray-400 px-4 py-2 rounded-md cursor-not-allowed">
@@ -56,8 +86,17 @@ export default function SignInButton() {
             <Dropdown menu={{ items }} placement="bottomRight">
                 <div className="flex items-center gap-2 cursor-pointer">
                     <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
-                        {session.user?.image && (
+                        {/* {session.user?.image && (
                             <Image
+                                src={getProxiedImageUrl(session.user.image)}
+                                alt={session.user.name || 'User avatar'}
+                                width={32}
+                                height={32}
+                                className="rounded-full"
+                            />
+                        )} */}
+                        {session.user?.image && (
+                            <img
                                 src={session.user.image}
                                 alt={session.user.name || 'User avatar'}
                                 width={32}
@@ -74,10 +113,7 @@ export default function SignInButton() {
 
     return (
         <button
-            onClick={async () => {
-
-                await signIn("github")
-            }}
+            onClick={handleGitHubSignIn}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors duration-200"
         >
             <svg
