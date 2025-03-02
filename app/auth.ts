@@ -1,6 +1,9 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
-// import { getProxyConfig } from "@/proxy-config"
+import { setupGlobalFetch } from "@/proxy-config"
+
+// 设置全局 fetch 拦截器（但不启用代理）
+setupGlobalFetch();
 
 // 打印环境变量（开发环境调试用）
 console.log('Environment Config:', {
@@ -31,32 +34,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     debug: true,
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
-            console.log('Sign in attempt:', { user, account, profile, email, credentials });
-
+            console.log('signIn!!!!!!!!!!:', user, account, profile, email, credentials);
+            console.log('Sign in callback executed');
             return true;
         },
         async redirect({ url, baseUrl }) {
-            console.log('Redirect:', { url, baseUrl });
+
+            console.log('redirect!!!!!!!!!!:', url, baseUrl);
             return baseUrl;
         },
         async session({ session, user, token }) {
-            console.log('Session:', { session, user, token });
+            console.log('session!!!!!!!!!!:', session, user, token);
             return session;
         },
         async jwt({ token, user, account, profile }) {
-            console.log('JWT:', { token, user, account, profile });
+            console.log('jwt!!!!!!!!!!:', token, user, account, profile);
             return token;
         }
     },
     events: {
-        async signIn(message) { console.log('signIn:', message) },
-        async signOut(message) { console.log('signOut:', message) },
+        async signIn(message) {
+            console.log('signIn event:', message);
+        },
+        async signOut(message) {
+            console.log('signOut:', message);
+        },
     },
     pages: {
         signIn: '/auth/signin',
         error: '/auth/error',
     }
 })
-
-
-

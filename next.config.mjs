@@ -13,5 +13,11 @@ export default {
                 pathname: '/**',
             },
         ],
+        domains: [
+            'avatars.githubusercontent.com',  // GitHub 头像域名
+            'github.com',
+            'avatar.vercel.sh',
+            'githubusercontent.com'
+        ],
     },
 };
