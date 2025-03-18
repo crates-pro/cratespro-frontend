@@ -128,7 +128,7 @@ export default function SignInButton() {
                     clipRule="evenodd"
                 />
             </svg>
-            登录
+            Login With GitHub
         </button>
     );
 }
