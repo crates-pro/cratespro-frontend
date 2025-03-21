@@ -1,6 +1,6 @@
 "use client";
 import '@/app/ui/global.css';
-import NewHeader from '@/components/NewHeader';
+// import NewHeader from '@/components/NewHeader';
 
 
 

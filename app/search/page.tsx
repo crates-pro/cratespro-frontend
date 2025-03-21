@@ -8,13 +8,13 @@ import { searchResult } from '@/app/lib/all_interface';
 
 const Search = () => {
     const [results, setResults] = useState<searchResult | null>(null);
-    const [currentPage, setCurrentPage] = useState(1);
+    // const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const searchParams = useSearchParams();
     const name = searchParams.get('crate_name');
     const [activeTab, setActiveTab] = useState('All');
     const [localCurrentPage, setLocalCurrentPage] = useState(1); // 本地分页状态
-    const itemsPerPage = 10; // 每页显示10条
+    // const itemsPerPage = 10; // 每页显示10条
 
     useEffect(() => {
         if (name) {

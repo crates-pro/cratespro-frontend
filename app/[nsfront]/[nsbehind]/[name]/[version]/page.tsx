@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { cratesInfo } from '@/app/lib/all_interface';
 import { useParams } from 'next/navigation';
 import { Pagination } from 'antd';
-import NewHeader from '@/components/NewHeader';
+// import NewHeader from '@/components/NewHeader';
 
 interface CVE {
     subtitle?: string;
