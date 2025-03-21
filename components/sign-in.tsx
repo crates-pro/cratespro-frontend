@@ -2,8 +2,9 @@
 
 import { useEffect } from 'react';
 import { signIn, signOut, useSession } from 'next-auth/react';
-// import Image from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
+
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 
@@ -96,7 +97,7 @@ export default function SignInButton() {
                             />
                         )} */}
                         {session.user?.image && (
-                            <img
+                            <Image
                                 src={session.user.image}
                                 alt={session.user.name || 'User avatar'}
                                 width={32}

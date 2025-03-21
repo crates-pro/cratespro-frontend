@@ -1,6 +1,6 @@
 import '@/app/ui/global.css';
 import { HeaderProvider } from '../../context/CrateContext';
-import Header from '@/components/HeaderWithSearch';
+// import Header from '@/components/HeaderWithSearch';
 
 
 export const metadata = {
@@ -17,7 +17,7 @@ export default function layout({
         <html lang="cn">
             <body>
                 <HeaderProvider>
-                    <Header />
+                    {/* <Header /> */}
                     {children}
                 </HeaderProvider>
             </body>
