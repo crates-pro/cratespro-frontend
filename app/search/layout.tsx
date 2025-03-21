@@ -13,7 +13,7 @@ export default function RootLayout({
     return (
         <html lang="cn">
             <body>
-                <NewHeader />
+                {/* <NewHeader /> */}
                 {children}
 
             </body>

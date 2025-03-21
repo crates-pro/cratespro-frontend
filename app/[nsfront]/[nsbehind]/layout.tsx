@@ -17,7 +17,7 @@ export default function layout({
         <html lang="cn">
             <body>
                 <HeaderProvider>
-                    <Header />
+                    {/* <Header /> */}
                     {children}
                 </HeaderProvider>
             </body>
