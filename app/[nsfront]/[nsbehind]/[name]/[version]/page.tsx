@@ -166,7 +166,7 @@ const CratePage = () => {
                 const data = await response.json();
                 setResults(data);
             } catch (error) {
-                console.error('Error fetching crate:', error);
+                console.error('Error fetching crate data:', error);
                 setError('An error occurred');
             } finally {
                 setLoading(false);
