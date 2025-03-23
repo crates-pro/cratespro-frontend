@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { cratesInfo } from '@/app/lib/all_interface';
 import { useParams } from 'next/navigation';
-import { Pagination } from 'antd';
+// import { Pagination } from 'antd';
+import Image from 'next/image';
 // import NewHeader from '@/components/NewHeader';
 
 interface CVE {
@@ -24,116 +25,110 @@ interface CVE {
 }
 
 const CveCard = ({ cve }: { cve: CVE }) => (
-    <div className="bg-white p-4 rounded-lg border border-gray-200">
-        {/* 标题和ID */}
-        <div className="mb-2">
-            <p className="text-red-600 font-medium">
-                {cve.subtitle || 'No subtitle available'}
-            </p>
-            <p className="text-gray-600">
+    <div className="mb-6 pb-6 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0">
+        {/* Package Name (红色标题) */}
+        {cve.subtitle && (
+            <div className="mb-[4px]">
+                <p className="text-[#FD5656] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">
+                    {cve.subtitle}
+                </p>
+            </div>
+        )}
+
+        {/* ID */}
+        <div className="mb-[4px]">
+            <p className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">
                 {cve.id || 'No ID available'}
             </p>
         </div>
 
-        {/* 时间信息 */}
-        <div className=" mb-2 ">
+        {/* Reported */}
+        <div className="mb-[4px]">
             <div>
-                <span className="font-medium text-gray-500 mr-4">Reported </span>
-                <span className="text-gray-600">{cve.reported || 'Not specified'}</span>
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Reported </span>
+                <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.reported || 'Not specified'}</span>
             </div>
-
         </div>
 
-        {/* 时间信息 */}
-        <div className="mb-2">
-            <span className="font-medium text-gray-500 mr-4">Issued </span>
-            <span className="text-gray-600">{cve.issued || 'Not specified'}</span>
+        {/* Issued */}
+        <div className="mb-[4px]">
+            <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Issued </span>
+            <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.issued || 'Not specified'}</span>
         </div>
 
-
-
-        {/* 包信息 */}
-        <div className="mb-2">
-            <span className="text-sm font-medium text-gray-500 mr-4">Package </span>
-            <span className="text-gray-600">{cve.package || 'No package info'}</span>
+        {/* Package */}
+        <div className="mb-[4px]">
+            <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Package </span>
+            <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.package || 'No package info'}</span>
         </div>
 
-
-
-
-        {/* 类型信息 */}
+        {/* Type */}
         {cve.ttype && (
-            <div className="mb-2 ">
-                <span className="text-sm font-medium text-gray-500 mr-4">Type </span>
-                <span className="text-gray-600">{cve.ttype}</span>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Type </span>
+                <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.ttype}</span>
             </div>
         )}
 
-
-        {/* 别名信息 */}
+        {/* Aliases */}
         {cve.aliases && (
-            <div className="mb-2">
-                <span className="text-sm font-medium text-gray-500 mr-4">Aliases </span>
-                <span className="text-gray-600">{Array.isArray(cve.aliases) ? cve.aliases.join(', ') : cve.aliases}</span>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Aliases </span>
+                <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{Array.isArray(cve.aliases) ? cve.aliases.join(', ') : cve.aliases}</span>
             </div>
-
         )}
 
-        {/* 关键词 */}
+        {/* Keywords */}
         {cve.keywords && (
-            <div className="mb-2">
-                <span className="text-sm font-medium text-gray-500 mr-4">Keywords </span>
-                <span className="text-gray-600">{cve.keywords}</span>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Keywords </span>
+                <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.keywords}</span>
             </div>
         )}
 
-
-        {/* 修复状态 */}
+        {/* Patched */}
         {cve.patched && (
-            <div className="mb-2">
-                <span className="text-sm font-medium text-gray-500 mr-4">Patched </span>
-                <span className="text-gray-600">{cve.patched}</span>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Patched </span>
+                <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.patched}</span>
             </div>
-
         )}
 
-        {/* 未受影响版本 */}
+        {/* Unaffected */}
         {cve.unaffected && (
-            <div className="mb-2">
-                <span className="text-sm font-medium text-gray-500 mr-4">Unaffected </span>
-                <span className="text-gray-600">{cve.unaffected}</span>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Unaffected </span>
+                <span className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.unaffected}</span>
             </div>
-
         )}
 
         {/* URL */}
         {cve.url && (
-            <div className="mb-2">
-                <span className="text-sm font-medium text-gray-500 mr-4">Url </span>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px] mr-4">Url </span>
                 <a
                     href={cve.url}
-
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline break-all"
+                    className="text-[#4B68FF] text-[16px] font-['HarmonyOS_Sans_SC'] font-normal leading-[18px] hover:underline break-all"
                 >
                     {cve.url}
                 </a>
             </div>
         )}
 
-        {/* 引用链接 */}
+        {/* Reference */}
         {cve.reference && (
-            <div className="mb-2">
-                <p className="text-sm font-medium text-gray-500">Reference</p>
-                <div className="text-blue-500 hover:underline break-all">
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">Reference</span>
+                <div className="text-[#4B68FF] hover:underline break-all">
                     {cve.reference.split(' ').map((url: string, i: number) => (
                         <a
                             key={i}
                             href={url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block"
+                            className="block text-[16px] font-['HarmonyOS_Sans_SC'] font-normal leading-[18px]"
                         >
                             {url}
                         </a>
@@ -142,11 +137,11 @@ const CveCard = ({ cve }: { cve: CVE }) => (
             </div>
         )}
 
-        {/* 描述信息 */}
+        {/* Description */}
         {cve.description && (
-            <div className="mb-2">
-                <p className="text-sm font-medium text-gray-500">Description</p>
-                <p className="text-gray-600">{cve.description}</p>
+            <div className="mb-[4px]">
+                <span className="text-[#666666] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">Description</span>
+                <p className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[16px] font-normal leading-[18px]">{cve.description}</p>
             </div>
         )}
     </div>
@@ -170,9 +165,8 @@ const CratePage = () => {
                 }
                 const data = await response.json();
                 setResults(data);
-                console.log('data in overviewwwwwwwww:', data);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching crate data:', error);
                 setError('An error occurred');
             } finally {
                 setLoading(false);
@@ -181,11 +175,10 @@ const CratePage = () => {
 
         fetchCrateData();
     }, [params.name, params.version, params.nsfront, params.nsbehind]);
-    console.log('results in overviewwwwwwwww:', results);
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
 
-    // 计算当前页的 CVE 数据
     const getCurrentPageItems = (items: CVE[], currentPage: number) => {
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
@@ -193,293 +186,535 @@ const CratePage = () => {
     };
 
     return (
-        <div style={{ width: '90%', margin: '0 auto' }}>
-            <div className="my-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-6">
+        <div className="min-h-screen bg-white flex flex-col">
+            <div className="flex justify-center">
+                <div className="w-[1500px] px-8 py-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* 左侧内容区域 - 占据2列 */}
+                        <div className="lg:col-span-2 space-y-6">
+                            {/* Security Advisories 标题 */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-[4px] h-[24px] flex-shrink-0 rounded-[2px] bg-[#4B68FF]"></div>
+                                <h2 className="text-[24px] font-bold text-[#333333] tracking-[0.96px] font-['HarmonyOS_Sans_SC']">
+                                    Security Advisories
+                                </h2>
+                            </div>
 
-                    {/* Security Advisories 主框 */}
-                    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300">
-                        {/* Security Advisories 标题 */}
-                        <div className="mb-6">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-3xl">Security Advisories</h2>
-                                <span
-                                    className="text-white px-3 py-1 rounded-full text-sm"
-                                    style={{
-                                        backgroundColor: results && (results.cves?.length + results.dep_cves?.length) > 0
-                                            ? 'rgb(179, 20, 18)'
-                                            : 'rgb(34, 197, 94)'
-                                    }}
-                                >
-                                    {results ? (results.cves?.length || 0) + (results.dep_cves?.length || 0) : 0}
-                                </span>
+                            {/* Security Advisories 内容 */}
+                            <div className="space-y-6">
+                                {/* In this package */}
+                                <div className={`bg-white rounded-2xl p-6 shadow-[0_0_12px_0_rgba(43,88,221,0.09)] ${results?.cves && results.cves.length > 0 ? 'h-[502px]' : 'h-[300px]'}`}>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <h3 className="text-[24px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-medium tracking-[0.96px]">In this package</h3>
+                                        <span className={`w-[28px] h-[28px] flex-shrink-0 aspect-square flex items-center justify-center rounded-full text-sm text-white ${results?.cves && results.cves.length > 0 ? 'bg-[#FD5656]' : 'bg-[#4B68FF]'}`}>
+                                            {results?.cves?.length || 0}
+                                        </span>
+                                    </div>
+                                    <div className="h-[calc(100%-40px)] flex items-center justify-center">
+                                        {results?.cves && results.cves.length > 0 ? (
+                                            <div className={results?.cves && results.cves.length > 0 ? "overflow-auto h-full w-full" : ""}>
+                                                {getCurrentPageItems(results.cves, packageCurrentPage).map((cve, index) => (
+                                                    <CveCard key={index} cve={cve} />
+                                                ))}
+                                                {results.cves.length > itemsPerPage && (
+                                                    <div className="mt-4 flex justify-center">
+                                                        <button
+                                                            onClick={() => setPackageCurrentPage(1)}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={packageCurrentPage === 1}
+                                                        >
+                                                            &lt;&lt;
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setPackageCurrentPage(prev => Math.max(1, prev - 1))}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={packageCurrentPage === 1}
+                                                        >
+                                                            &lt;
+                                                        </button>
+                                                        {Array.from({ length: Math.min(5, Math.ceil(results.cves.length / itemsPerPage)) }).map((_, i) => {
+                                                            const pageNum = packageCurrentPage - Math.floor(Math.min(5, Math.ceil(results.cves.length / itemsPerPage)) / 2) + i;
+                                                            if (pageNum > 0 && pageNum <= Math.ceil(results.cves.length / itemsPerPage)) {
+                                                                return (
+                                                                    <button
+                                                                        key={i}
+                                                                        onClick={() => setPackageCurrentPage(pageNum)}
+                                                                        className={`mx-1 w-6 h-6 rounded-full flex items-center justify-center text-sm ${packageCurrentPage === pageNum
+                                                                            ? 'bg-blue-500 text-white'
+                                                                            : 'border'
+                                                                            }`}
+                                                                    >
+                                                                        {pageNum}
+                                                                    </button>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
+                                                        <button
+                                                            onClick={() => setPackageCurrentPage(prev => Math.min(Math.ceil(results.cves.length / itemsPerPage), prev + 1))}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={packageCurrentPage >= Math.ceil(results.cves.length / itemsPerPage)}
+                                                        >
+                                                            &gt;
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setPackageCurrentPage(Math.ceil(results.cves.length / itemsPerPage))}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={packageCurrentPage >= Math.ceil(results.cves.length / itemsPerPage)}
+                                                        >
+                                                            &gt;&gt;
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center">
+                                                <Image
+                                                    src="/images/homepage/miss.png"
+                                                    alt="No vulnerabilities"
+                                                    width={192}
+                                                    height={192}
+                                                    className="mb-1"
+                                                />
+                                                <p className="text-[#C9D2FF] font-['HarmonyOS_Sans_SC'] text-[14px] font-normal leading-normal capitalize">No vulnerabilities found</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* In the dependencies */}
+                                <div className={`bg-white rounded-2xl p-6 shadow-[0_0_12px_0_rgba(43,88,221,0.09)] ${results?.dep_cves && results.dep_cves.length > 0 ? 'h-[502px]' : 'h-[300px]'}`}>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <h3 className="text-[24px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-medium tracking-[0.96px]">In the dependencies</h3>
+                                        <span className={`w-[28px] h-[28px] flex-shrink-0 aspect-square flex items-center justify-center rounded-full text-sm text-white ${results?.dep_cves && results.dep_cves.length > 0 ? 'bg-[#FD5656]' : 'bg-[#4B68FF]'}`}>
+                                            {results?.dep_cves?.length || 0}
+                                        </span>
+                                    </div>
+                                    <div className="h-[calc(100%-40px)] flex items-center justify-center">
+                                        {results?.dep_cves && results.dep_cves.length > 0 ? (
+                                            <div className={results?.dep_cves && results.dep_cves.length > 0 ? "overflow-auto h-full w-full" : ""}>
+                                                {getCurrentPageItems(results.dep_cves, depCurrentPage).map((cve, index) => (
+                                                    <CveCard key={index} cve={cve} />
+                                                ))}
+                                                {results.dep_cves.length > itemsPerPage && (
+                                                    <div className="mt-4 flex justify-center">
+                                                        <button
+                                                            onClick={() => setDepCurrentPage(1)}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={depCurrentPage === 1}
+                                                        >
+                                                            &lt;&lt;
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setDepCurrentPage(prev => Math.max(1, prev - 1))}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={depCurrentPage === 1}
+                                                        >
+                                                            &lt;
+                                                        </button>
+                                                        {Array.from({ length: Math.min(5, results.dep_cves.length) }).map((_, i) => {
+                                                            const pageNum = depCurrentPage - 2 + i;
+                                                            if (pageNum > 0 && pageNum <= results.dep_cves.length) {
+                                                                return (
+                                                                    <button
+                                                                        key={i}
+                                                                        onClick={() => setDepCurrentPage(pageNum)}
+                                                                        className={`mx-1 w-6 h-6 rounded-full flex items-center justify-center text-sm ${depCurrentPage === pageNum
+                                                                            ? 'bg-blue-500 text-white'
+                                                                            : 'border'
+                                                                            }`}
+                                                                    >
+                                                                        {pageNum}
+                                                                    </button>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
+                                                        <button
+                                                            onClick={() => setDepCurrentPage(prev => Math.min(results.dep_cves.length, prev + 1))}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={depCurrentPage >= results.dep_cves.length}
+                                                        >
+                                                            &gt;
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setDepCurrentPage(results.dep_cves.length)}
+                                                            className="mx-1 w-6 h-6 rounded-full flex items-center justify-center border text-sm"
+                                                            disabled={depCurrentPage >= results.dep_cves.length}
+                                                        >
+                                                            &gt;&gt;
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center">
+                                                <Image
+                                                    src="/images/homepage/miss.png"
+                                                    alt="No vulnerabilities"
+                                                    width={192}
+                                                    height={192}
+                                                    className="mb-1"
+                                                />
+                                                <p className="text-[#C9D2FF] font-['HarmonyOS_Sans_SC'] text-[14px] font-normal leading-normal capitalize">No vulnerabilities found</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Licenses */}
+                            <div className="space-y-6">
+                                {/* Licenses 标题 */}
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-[4px] h-[24px] flex-shrink-0 rounded-[2px] bg-[#4B68FF]"></div>
+                                        <h2 className="text-[24px] font-bold text-[#333333] tracking-[0.96px] font-['HarmonyOS_Sans_SC']">
+                                            Licenses
+                                        </h2>
+                                    </div>
+                                    <a href="#" className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal capitalize hover:underline">
+                                        Learn more about license information.
+                                    </a>
+                                </div>
+                                {/* Licenses 内容 */}
+                                <div className="bg-white rounded-2xl p-6 shadow-[0_0_12px_0_rgba(43,88,221,0.09)]">
+                                    <div className="text-[18px] text-black font-['HarmonyOS_Sans_SC'] font-normal capitalize">
+                                        {results ? results.license : 'No results available'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Dependencies */}
+                            <div className="space-y-6">
+                                {/* Dependencies 标题 */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-[4px] h-[24px] flex-shrink-0 rounded-[2px] bg-[#4B68FF]"></div>
+                                    <h2 className="text-[24px] font-bold text-[#333333] tracking-[0.96px] font-['HarmonyOS_Sans_SC']">
+                                        Dependencies
+                                    </h2>
+                                </div>
+                                {/* Dependencies 内容 */}
+                                {results && (results.dependencies.direct + results.dependencies.indirect) > 0 ? (
+                                    <div className="bg-white rounded-2xl p-6 shadow-[0_0_12px_0_rgba(43,88,221,0.09)]">
+                                        <div className="space-y-4">
+                                            {/* Direct */}
+                                            <div className="grid grid-cols-[80px_48px_1fr] gap-3 items-center">
+                                                <div className="text-black text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">Direct</div>
+                                                <div className="text-right text-[#4B68FF] text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">{results.dependencies.direct}</div>
+                                                <div className="h-4 rounded-lg overflow-hidden bg-[#F5F7FF]">
+                                                    <div
+                                                        className="h-full bg-[#4B68FF] rounded-lg"
+                                                        style={{
+                                                            width: `${(results.dependencies.direct / (results.dependencies.direct + results.dependencies.indirect)) * 100}%`
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Indirect */}
+                                            <div className="grid grid-cols-[80px_48px_1fr] gap-3 items-center">
+                                                <div className="text-black text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">Indirect</div>
+                                                <div className="text-right text-[#4B68FF] text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">{results.dependencies.indirect}</div>
+                                                <div className="h-4 rounded-lg overflow-hidden bg-[#F5F7FF]">
+                                                    <div
+                                                        className="h-full bg-[#4B68FF] rounded-lg"
+                                                        style={{
+                                                            width: `${(results.dependencies.indirect / (results.dependencies.direct + results.dependencies.indirect)) * 100}%`
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6 text-center">
+                                            <Link href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`}>
+                                                <span className="text-[#4B68FF] text-[18px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline">
+                                                    View all dependencies ({results.dependencies.direct + results.dependencies.indirect})
+                                                </span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[18px] font-normal leading-normal capitalize">
+                                        This Package Has No Known Dependencies.
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Dependents */}
+                            <div className="space-y-6">
+                                {/* Dependents 标题 */}
+                                <div className="flex items-center gap-3">
+                                    <div className="w-[4px] h-[24px] flex-shrink-0 rounded-[2px] bg-[#4B68FF]"></div>
+                                    <h2 className="text-[24px] font-bold text-[#333333] tracking-[0.96px] font-['HarmonyOS_Sans_SC']">
+                                        Dependents
+                                    </h2>
+                                </div>
+                                {/* Dependents 内容 */}
+                                {results && (results.dependents.direct + results.dependents.indirect) > 0 ? (
+                                    <div className="bg-white rounded-2xl p-6 shadow-[0_0_12px_0_rgba(43,88,221,0.09)]">
+                                        <div className="space-y-4">
+                                            {/* Direct */}
+                                            <div className="grid grid-cols-[80px_48px_1fr] gap-3 items-center">
+                                                <div className="text-black text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">Direct</div>
+                                                <div className="text-right text-[#4B68FF] text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">{results.dependents.direct}</div>
+                                                <div className="h-4 rounded-lg overflow-hidden bg-[#F5F7FF]">
+                                                    <div
+                                                        className="h-full bg-[#4B68FF] rounded-lg"
+                                                        style={{
+                                                            width: `${(results.dependents.direct / (results.dependents.direct + results.dependents.indirect)) * 100}%`
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Indirect */}
+                                            <div className="grid grid-cols-[80px_48px_1fr] gap-3 items-center">
+                                                <div className="text-black text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">Indirect</div>
+                                                <div className="text-right text-[#4B68FF] text-[18px] font-['HarmonyOS_Sans_SC'] font-normal capitalize">{results.dependents.indirect}</div>
+                                                <div className="h-4 rounded-lg overflow-hidden bg-[#F5F7FF]">
+                                                    <div
+                                                        className="h-full bg-[#4B68FF] rounded-lg"
+                                                        style={{
+                                                            width: `${(results.dependents.indirect / (results.dependents.direct + results.dependents.indirect)) * 100}%`
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-6 text-center">
+                                            <Link href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`}>
+                                                <span className="text-[#4B68FF] text-[18px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline">
+                                                    View all dependents ({results.dependents.direct + results.dependents.indirect})
+                                                </span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-[#333333] font-['HarmonyOS_Sans_SC'] text-[18px] font-normal leading-normal capitalize">
+                                        This Package Has No Known Dependents.
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* 两个子框的容器 */}
+                        {/* 右侧内容区域 - 占据1列 */}
                         <div className="space-y-6">
-                            {/* In this package 框 */}
-                            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-semibold">In this package</h3>
-                                    <span className="text-white px-3 py-1 rounded-full text-sm"
-                                        style={{ backgroundColor: (results?.cves && results.cves.length > 0) ? 'rgb(179, 20, 18)' : 'rgb(34, 197, 94)' }}>
-                                        {results?.cves?.length || 0}
-                                    </span>
+                            {/* 第一个摘要 */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Image
+                                        src="/images/homepage/1.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        摘要
+                                    </h2>
                                 </div>
                                 <div className="space-y-4">
-                                    {results?.cves && results.cves.length > 0 ? (
-                                        <>
-                                            {getCurrentPageItems(results.cves, packageCurrentPage).map((cve, index) => (
-                                                <CveCard key={index} cve={cve} />
-                                            ))}
-                                            {results.cves.length > itemsPerPage && (
-                                                <div className="mt-4 flex justify-center">
-                                                    <Pagination
-                                                        current={packageCurrentPage}
-                                                        onChange={setPackageCurrentPage}
-                                                        total={results.cves.length}
-                                                        pageSize={itemsPerPage}
-                                                        size="small"
-                                                        showSizeChanger={false}
-                                                        simple
-                                                    />
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <p className="text-gray-500">No vulnerabilities found</p>
-                                    )}
+                                    <div>
+                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">Documentation URL</h3>
+                                        <a
+                                            href={results?.doc_url}
+                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {results?.doc_url || 'No results available'}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* In the dependencies 框 */}
-                            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-semibold">In the dependencies</h3>
-                                    <span className="text-white px-3 py-1 rounded-full text-sm"
-                                        style={{ backgroundColor: results && results.dep_cves && results.dep_cves.length > 0 ? 'rgb(179, 20, 18)' : 'rgb(34, 197, 94)' }}>
-                                        {results?.dep_cves?.length || 0}
-                                    </span>
+                            {/* 第二个摘要 */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Image
+                                        src="/images/homepage/2.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        摘要
+                                    </h2>
                                 </div>
                                 <div className="space-y-4">
-                                    {results?.dep_cves && results.dep_cves.length > 0 ? (
-                                        <>
-                                            {getCurrentPageItems(results.dep_cves, depCurrentPage).map((cve, index) => (
-                                                <CveCard key={index} cve={cve} />
-                                            ))}
-                                            {results.dep_cves.length > itemsPerPage && (
-                                                <div className="mt-4 flex justify-center">
-                                                    <Pagination
-                                                        current={depCurrentPage}
-                                                        onChange={setDepCurrentPage}
-                                                        total={results.dep_cves.length}
-                                                        pageSize={itemsPerPage}
-                                                        size="small"
-                                                        showSizeChanger={false}
-                                                        simple
-                                                    />
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <p className="text-gray-500">No vulnerabilities found</p>
-                                    )}
+                                    <div>
+                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">GitHub URL</h3>
+                                        <a
+                                            href={results?.github_url}
+                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {results?.github_url || 'No results available'}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    {/* Licenses */}
-                    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300">
-                        <h2 className="text-3xl mb-2">Licenses</h2>
-                        <a
-                            href={'#'}
-                            className="hover:underline"
-                            style={{ color: 'rgb(25,135,188)' }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Learn more about license information.
-                        </a>
-                        <div className="mb-1 mt-6">
-                            <span className="">LICENSES</span>
-                        </div>
-                        <div className='mb-3 text-2xl'>
-                            <span>{results ? results.license : 'No results available'}</span>
-                        </div>
-                    </div>
-
-                    {/* Dependencies */}
-                    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-3xl mb-2">Dependencies</h2>
-                            <span className="text-m border border-gray-300 p-1 w-auto rounded inline-block">
-                                {results ? results.dependencies.direct + results.dependencies.indirect : 0}
-                            </span>
-                        </div>
-                        {/* Direct */}
-                        <div className="mb-1 mt-6 flex items-center">
-                            <div style={{ color: 'rgb(25,135,188)', width: '100px' }}>Direct</div>
-                            <span className="mr-1" style={{ color: 'rgb(25,135,188)', width: '50px', textAlign: 'right' }}>
-                                {results ? JSON.stringify(results.dependencies.direct) : 'No cves detected.'}
-                            </span>
-                            <div className="flex-grow bg-gray-200 h-2 rounded">
-                                <div
-                                    style={{
-                                        width: `${results && (results.dependencies.direct + results.dependencies.indirect) > 0
-                                            ? (results.dependencies.direct / (results.dependencies.direct + results.dependencies.indirect)) * 100
-                                            : 0 // 当分母为0时，条状图宽度直接设为0%
-                                            }%`,
-                                        backgroundColor: 'rgb(50,165,224)',
-                                    }}
-                                    className="h-full rounded"
-                                ></div>
-                            </div>
-                        </div>
-                        {/* Indirect */}
-                        <div className="mb-2 flex items-center">
-                            <div style={{ color: 'rgb(25,135,188)', width: '100px' }}>Indirect</div>
-                            <span className="mr-1" style={{ color: 'rgb(25,135,188)', width: '50px', textAlign: 'right' }}>
-                                {results ? JSON.stringify(results.dependencies.indirect) : 'No results available'}
-                            </span>
-                            <div className="flex-grow bg-gray-200 h-2 rounded">
-                                <div
-                                    style={{
-                                        width: `${results && (results.dependencies.direct + results.dependencies.indirect) > 0
-                                            ? (results.dependencies.indirect / (results.dependencies.direct + results.dependencies.indirect)) * 100
-                                            : 0
-                                            }%`,
-                                        backgroundColor: 'rgb(50,165,224)',
-                                    }}
-                                    className="h-full rounded"
-                                ></div>
-                            </div>
-                        </div>
-
-                        <div className="text-center mt-4">
-                            <Link
-                                href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies`}
-                            >
-                                <div className="font-bold hover:underline" style={{ color: 'rgb(0,137,205)' }}>
-                                    View all dependencies
+                            {/* Documentation */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Image
+                                        src="/images/homepage/3.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        Documentation
+                                    </h2>
                                 </div>
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Dependents */}
-                    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-300">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-3xl mb-2">Dependents</h2>
-                            <span className="text-m border border-gray-300 p-1 w-auto rounded inline-block">
-                                {results ? results.dependents.direct + results.dependents.indirect : 0}
-                            </span>
-                        </div>
-                        {/* Direct */}
-                        <div className="mb-1 mt-6 flex items-center">
-                            <div style={{ color: 'rgb(25,135,188)', width: '100px' }}>Direct</div>
-                            <span className="mr-1" style={{ color: 'rgb(25,135,188)', width: '50px', textAlign: 'right' }}>
-                                {results ? JSON.stringify(results.dependents.direct) : 'No results available'}
-                            </span>
-
-                            <div className="flex-grow bg-gray-200 h-2 rounded overflow-hidden">
-                                <div
-                                    style={{
-                                        width: `${results && (results.dependents.direct + results.dependents.indirect) > 0
-                                            ? (results.dependents.direct / (results.dependents.direct + results.dependents.indirect)) * 100
-                                            : 0 // 当分母为0时，条状图宽度直接设为0%
-                                            }%`,
-                                        backgroundColor: 'rgb(50,165,224)',
-                                    }}
-                                    className="h-full rounded"
-                                ></div>
-                            </div>
-                        </div>
-                        {/* Indirect */}
-                        <div className="mb-2 flex items-center">
-                            <div style={{ color: 'rgb(25,135,188)', width: '100px' }}>Indirect</div>
-                            <span className="mr-1" style={{ color: 'rgb(25,135,188)', width: '50px', textAlign: 'right' }}>
-                                {results ? JSON.stringify(results.dependents.indirect) : 'No results available'}
-                            </span>
-                            <div className="flex-grow bg-gray-200 h-2 rounded overflow-hidden">
-                                <div
-                                    style={{
-                                        width: `${results && (results.dependents.direct + results.dependents.indirect) > 0
-                                            ? (results.dependents.indirect / (results.dependents.direct + results.dependents.indirect)) * 100
-                                            : 0 // 当分母为0时，将宽度设为0%
-                                            }%`,
-                                        backgroundColor: 'rgb(50,165,224)',
-                                    }}
-                                    className="h-full rounded"
-                                ></div>
-                            </div>
-                        </div>
-
-                        <div className="text-center mt-4">
-                            <Link href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependents`}>
-                                <div className="font-bold hover:underline" style={{ color: 'rgb(0,137,205)' }}>
-                                    View all dependents
+                                <div className="space-y-4">
+                                    <div>
+                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">Documentation URL</h3>
+                                        <a
+                                            href={results?.doc_url}
+                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {results?.doc_url || 'No results available'}
+                                        </a>
+                                    </div>
                                 </div>
-                            </Link>
-                        </div>
-                    </div>
+                            </div>
 
-                </div>
+                            {/* GitHub Links */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Image
+                                        src="/images/homepage/4.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        GitHub Links
+                                    </h2>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">GitHub URL</h3>
+                                        <a
+                                            href={results?.github_url}
+                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {results?.github_url || 'No results available'}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
-                {/* 新增的块: doc_url 和 github_url */}
-                <div className="space-y-6">
-                    <div className="bg-white shadow-lg rounded-lg p-4 border border-gray-300" style={{ maxWidth: '80%', marginLeft: 'auto' }}>
-                        <h2 className="text-3xl mb-2">Documentation & GitHub Links</h2>
-                        <div className="mb-2">
-                            <span className="">Documentation URL: </span>
-                            <a
-                                href={results ? results.doc_url : 'No results available'}
-                                className="hover:underline"
-                                style={{ color: 'rgb(25,135,188)' }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {results && results.doc_url !== '' ? results.doc_url : 'No results available'}
-                            </a>
-                        </div>
-                        <div className="mb-2">
-                            <span className="">GitHub URL: </span>
-                            <a
-                                href={results ? results.github_url : 'No results available'}
-                                className="hover:underline"
-                                style={{ color: 'rgb(25,135,188)' }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {results ? results.github_url : 'No results available'}
-                            </a>
-                        </div>
-                    </div>
+                            {/* OpenSSF Scorecard */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Image
+                                        src="/images/homepage/5.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        OpenSSF Scorecard
+                                    </h2>
+                                </div>
+                                <p className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-4">
+                                    The Open Source Security Foundation is a cross-industry collaboration to improve the security of
+                                    open source software (OSS). The Scorecard provides security health metrics for open source projects.
+                                </p>
+                                <a href="#" className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline block mb-6">
+                                    View information about checks and how to fix failures.
+                                </a>
 
-                    {/* OpenSSF scorecard */}
-                    <div className="bg-white shadow-lg rounded-lg p-4 border border-gray-300" style={{ maxWidth: '80%', marginLeft: 'auto' }}>
-                        <h2 className="text-3xl mb-2">OpenSSF scorecard</h2>
-                        <p>The Open Source Security Foundation is a cross-industry collaboration to improve the security of open source software (OSS). The Scorecard provides security health metrics for open source projects.</p>
-                        <a href="#" className="hover:underline" style={{ color: 'rgb(25,135,188)' }}>View information about checks and how to fix failures.</a>
-                        <div className="flex items-center justify-between mt-4">
-                            <div className="text-3xl">8.3/10</div>
-                            <div className="text-sm text-gray-500">Scorecard as of November 11, 2024.</div>
-                        </div>
-                        <div className="mt-4 space-y-2">
-                            <div className="flex justify-between"><span>Code-Review</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>Maintained</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>CI/Best-Practices</span><span>0/10</span></div>
-                            <div className="flex justify-between"><span>License</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>Dangerous-Workflow</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>Security-Policy</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>Token-Permissions</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>Binary-Artifacts</span><span>10/10</span></div>
-                            <div className="flex justify-between"><span>Pinned-Dependencies</span><span>0/10</span></div>
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="text-[24px] font-bold text-[#333333] font-['HarmonyOS_Sans_SC']">8.3/10</div>
+                                    <div className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal">Scorecard as of November 11, 2024</div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    {[
+                                        { name: 'Code-Review', score: '10/10' },
+                                        { name: 'Maintained', score: '10/10' },
+                                        { name: 'CI/Best-Practices', score: '10/10' },
+                                        { name: 'License', score: '10/10' },
+                                        { name: 'Dangerous-Workflow', score: '10/10' },
+                                        { name: 'Security-Policy', score: '10/10' },
+                                        { name: 'Token-Permissions', score: '10/10' },
+                                        { name: 'Binary-Artifacts', score: '10/10' },
+                                        { name: 'Pinned-Dependencies', score: '10/10' }
+                                    ].map((item, index) => (
+                                        <div key={index} className="flex justify-between items-center">
+                                            <span className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal">{item.name}</span>
+                                            <span className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal">{item.score}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <footer className="bg-[#002851] text-white py-12">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                        <div>
+                            <Image
+                                src="/images/homepage/logo-footer.png"
+                                alt="CratesPro Logo"
+                                width={180}
+                                height={60}
+                                className="mb-4"
+                            />
+                        </div>
+
+                        <div>
+                            <h4 className="text-lg font-semibold mb-4">Resources</h4>
+                            <ul className="space-y-2">
+                                <li><Link href="#" className="hover:text-blue-300">Documentation</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">About</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">Blog</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">FAQ</Link></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-lg font-semibold mb-4">API</h4>
+                            <ul className="space-y-2">
+                                <li><Link href="#" className="hover:text-blue-300">API</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">BigQuery Dataset</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">GitHub</Link></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-lg font-semibold mb-4">Legal</h4>
+                            <ul className="space-y-2">
+                                <li><Link href="#" className="hover:text-blue-300">Legal</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">Privacy</Link></li>
+                                <li><Link href="#" className="hover:text-blue-300">Terms</Link></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+                        <p>Copyright © 2023 jp21.com.cn All Rights Reserved(@ICPBH180237号)</p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };
