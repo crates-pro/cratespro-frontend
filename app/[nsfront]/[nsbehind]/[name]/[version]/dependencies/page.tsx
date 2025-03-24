@@ -49,7 +49,7 @@ const CratePage = () => {
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
-            <div className="flex justify-center w-full py-8">
+            <div className="flex justify-center w-full py-4">
                 <div className="w-[1500px] px-8">
                     <DependencyTable data={results?.data} />
                 </div>

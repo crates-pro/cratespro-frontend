@@ -188,7 +188,7 @@ const CratePage = () => {
     return (
         <div className="min-h-screen bg-white flex flex-col">
             <div className="flex justify-center">
-                <div className="w-[1500px] px-8 py-6">
+                <div className="w-[1500px] px-8 py-4">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* 左侧内容区域 - 占据2列 */}
                         <div className="lg:col-span-2 space-y-6">

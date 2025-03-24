@@ -12,7 +12,7 @@ export default function Layout({
     const params = useParams();
 
     return (
-        <div>
+        <div className="mb-0">
             <CrateNav
                 nsfront={params.nsfront as string}
                 nsbehind={params.nsbehind as string}
