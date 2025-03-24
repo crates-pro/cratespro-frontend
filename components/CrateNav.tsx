@@ -65,7 +65,7 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
                     <NewHeader />
                 </div>
             </div>
-            <div className="flex justify-center py-6">
+            <div className="flex justify-center py-3">
                 <div className="w-[1440px] h-[120px] bg-white rounded-2xl shadow-[0_0_12px_0_rgba(43,88,221,0.09)] px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center space-x-4">
