@@ -272,8 +272,8 @@ const CratePage = () => {
                                                 <Image
                                                     src="/images/homepage/miss.png"
                                                     alt="No vulnerabilities"
-                                                    width={192}
-                                                    height={192}
+                                                    width={140}
+                                                    height={140}
                                                     className="mb-1"
                                                 />
                                                 <p className="text-[#C9D2FF] font-['HarmonyOS_Sans_SC'] text-[14px] font-normal leading-normal capitalize">No vulnerabilities found</p>
