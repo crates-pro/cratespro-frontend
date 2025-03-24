@@ -60,9 +60,13 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
 
     return (
         <div>
-            <NewHeader />
-            <div className="flex justify-center px-4 py-6">
-                <div className="w-[1500px] h-[120px] bg-white rounded-2xl shadow-[0_0_12px_0_rgba(43,88,221,0.09)] px-8">
+            <div className="flex justify-center w-full">
+                <div className="w-[1500px] px-8">
+                    <NewHeader />
+                </div>
+            </div>
+            <div className="flex justify-center py-6">
+                <div className="w-[1440px] h-[120px] bg-white rounded-2xl shadow-[0_0_12px_0_rgba(43,88,221,0.09)] px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center space-x-4">
                             <h1 className="text-2xl font-semibold" style={{ color: 'rgb(28, 63, 115)' }}>{name}</h1>
