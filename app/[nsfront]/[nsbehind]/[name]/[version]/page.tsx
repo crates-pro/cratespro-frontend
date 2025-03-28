@@ -155,6 +155,7 @@ const CratePage = () => {
     const [packageCurrentPage, setPackageCurrentPage] = useState(1);
     const [depCurrentPage, setDepCurrentPage] = useState(1);
     const itemsPerPage = 1;
+    const basePath = `/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`;
 
     useEffect(() => {
         const fetchCrateData = async () => {
@@ -502,64 +503,6 @@ const CratePage = () => {
 
                         {/* 右侧内容区域 - 占据1列 */}
                         <div className="space-y-6">
-                            {/* 第一个摘要 */}
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <Image
-                                        src="/images/homepage/1.png"
-                                        alt="icon"
-                                        width={16}
-                                        height={16}
-                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
-                                    />
-                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
-                                        摘要
-                                    </h2>
-                                </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">Documentation URL</h3>
-                                        <a
-                                            href={results?.doc_url}
-                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {results?.doc_url || 'No results available'}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 第二个摘要 */}
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <Image
-                                        src="/images/homepage/2.png"
-                                        alt="icon"
-                                        width={16}
-                                        height={16}
-                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
-                                    />
-                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
-                                        摘要
-                                    </h2>
-                                </div>
-                                <div className="space-y-4">
-                                    <div>
-                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">GitHub URL</h3>
-                                        <a
-                                            href={results?.github_url}
-                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {results?.github_url || 'No results available'}
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Documentation */}
                             <div>
                                 <div className="flex items-center gap-3 mb-6">
@@ -575,8 +518,10 @@ const CratePage = () => {
                                     </h2>
                                 </div>
                                 <div className="space-y-4">
-                                    <div>
-                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">Documentation URL</h3>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal whitespace-nowrap">
+                                            Documentation URL:
+                                        </h3>
                                         <a
                                             href={results?.doc_url}
                                             className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
@@ -604,8 +549,10 @@ const CratePage = () => {
                                     </h2>
                                 </div>
                                 <div className="space-y-4">
-                                    <div>
-                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">GitHub URL</h3>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal whitespace-nowrap">
+                                            GitHub URL:
+                                        </h3>
                                         <a
                                             href={results?.github_url}
                                             className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
@@ -617,7 +564,34 @@ const CratePage = () => {
                                     </div>
                                 </div>
                             </div>
-
+                            {/* 第一个摘要 */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Image
+                                        src="/images/homepage/1.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        SenseLeak
+                                    </h2>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        {/* <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">Documentation URL</h3> */}
+                                        <a
+                                            href={basePath + '/senseleak'}
+                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {basePath + '/senseleak' || 'No results available'}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                             {/* OpenSSF Scorecard */}
                             <div>
                                 <div className="flex items-center gap-3 mb-4">

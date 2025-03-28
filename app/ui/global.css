@@ -28,3 +28,28 @@ input[type='number']::-webkit-outer-spin-button {
   font-weight: 400;
   font-style: normal;
 }
+
+/* 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4B68FF;
+  border-radius: 3px;
+  height: 4px;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4B68FF transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:vertical {
+  min-height: 4px;
+  max-height: 4px;
+} */
