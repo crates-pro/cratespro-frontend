@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import NewHeader from '@/components/NewHeader';
 import { useHeaderContext } from '../app/context/CrateContext';
 import Image from 'next/image';
@@ -14,6 +14,7 @@ interface CrateNavProps {
 
 const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version }) => {
     const pathname = usePathname();
+    const router = useRouter();
     const basePath = `/${nsfront}/${nsbehind}/${name}/${version}`;
     const [isOpen, setIsOpen] = useState(false);
     const [currentVersion, setCurrentVersion] = useState(version);
@@ -47,6 +48,9 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
         if (path === '') {
             return pathname === basePath;
         }
+        if (path === '/dependencies') {
+            return pathname === `${basePath}${path}` || pathname === `${basePath}${path}/graph`;
+        }
         return pathname === `${basePath}${path}`;
     };
 
@@ -57,6 +61,9 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
     const closeDropdown = () => {
         setIsOpen(false);
     };
+
+    // 判断是否在 graph page
+    const isGraphPage = pathname.includes('/dependencies/graph');
 
     return (
         <div>
@@ -120,23 +127,37 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
                             </div>
                         </div>
                     </div>
-                    <nav className="flex space-x-8">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={`${basePath}${item.path}`}
-                                className={`py-4 px-2 relative font-['HarmonyOS_Sans_SC'] text-center min-w-[108px] ${isActive(item.path)
-                                    ? 'text-blue-500'
-                                    : 'text-gray-500 hover:text-gray-700'
-                                    }`}
+                    <div className="flex items-center justify-between">
+                        <nav className="flex space-x-8">
+                            {navItems.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    href={`${basePath}${item.path}`}
+                                    className={`py-4 px-2 relative font-['HarmonyOS_Sans_SC'] text-center min-w-[108px] ${isActive(item.path)
+                                        ? 'text-blue-500'
+                                        : 'text-gray-500 hover:text-gray-700'
+                                        }`}
+                                >
+                                    {item.name}
+                                    {isActive(item.path) && (
+                                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[108px] h-[4px] flex-shrink-0 rounded-t-[3px] bg-[#4B68FF]"></div>
+                                    )}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        {/* Show List 按钮 - 仅在 graph page 显示 */}
+                        {isGraphPage && (
+                            <button
+                                onClick={() => router.push(`${basePath}/dependencies`)}
+                                className="bg-white w-[163px] h-[42px] flex-shrink-0 rounded-[21px] shadow-[0_0_12px_0_#2b58dd17] flex items-center justify-center hover:bg-[#3a57f0] transition-colors group"
                             >
-                                {item.name}
-                                {isActive(item.path) && (
-                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[108px] h-[4px] flex-shrink-0 rounded-t-[3px] bg-[#4B68FF]"></div>
-                                )}
-                            </Link>
-                        ))}
-                    </nav>
+                                <span className="font-['HarmonyOS_Sans_SC'] text-lg font-bold text-[#4B68FF] group-hover:text-white">
+                                    Show List
+                                </span>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
