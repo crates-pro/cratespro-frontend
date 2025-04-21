@@ -22,12 +22,12 @@ const HomePage: React.FC = () => {
         {
             title: "Vulnerability Detection and Risk Assessment",
             description: "CratesPro automatically detects potential vulnerabilities in the crates, including logic flaws, security risks, and performance bottlenecks. Using intelligent pattern recognition, it scans crate code and their dependencies to identify possible threats or weaknesses. These findings are presented with suggested fixes and recommendations.",
-            icon: "/images/homepage/vulnerability-detection.png"
+            icon: "/images/homepage/homepage-2.png"
         },
         {
             title: "CVE Tracking and Vulnerability Propagation",
             description: "CratesPro tracks CVE (Common Vulnerabilities and Exposures) related to Rust crates and their dependencies. The platform monitors crate versions and their updates, correlating them with known CVE databases to provide real-time updates on newly discovered vulnerabilities. This helps developers stay informed about potential threats to their projects and take proactive measures.",
-            icon: "/images/homepage/cve-tracking.png"
+            icon: "/images/homepage/homepage-3.png"
         },
         {
             title: "User-Uploaded Crates for Comprehensive Analysis",
