@@ -14,11 +14,11 @@ export default function Layout({
 
     // 判断当前页面是否为SenseLeak页面
     const isSenseLeakPage = pathname.includes('/senseleak');
-
+    const isMircheckerPage = pathname.includes('/mirchecker');
     return (
         <div className="mb-0">
             {/* 仅在非SenseLeak页面显示导航栏 */}
-            {!isSenseLeakPage && (
+            {!isSenseLeakPage && !isMircheckerPage && (
                 <CrateNav
                     nsfront={params.nsfront as string}
                     nsbehind={params.nsbehind as string}

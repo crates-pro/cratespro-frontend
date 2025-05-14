@@ -580,7 +580,6 @@ const CratePage = () => {
                                 </div>
                                 <div className="space-y-4">
                                     <div>
-                                        {/* <h3 className="text-[14px] text-[#333333] font-['HarmonyOS_Sans_SC'] font-normal mb-2">Documentation URL</h3> */}
                                         <a
                                             href={basePath + '/senseleak'}
                                             className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
@@ -588,6 +587,33 @@ const CratePage = () => {
                                             rel="noopener noreferrer"
                                         >
                                             {basePath + '/senseleak' || 'No results available'}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Mirchecker 部分 - 新增 */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Image
+                                        src="/images/homepage/1.png"
+                                        alt="icon"
+                                        width={16}
+                                        height={16}
+                                        className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
+                                    />
+                                    <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
+                                        Mirchecker
+                                    </h2>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <a
+                                            href={basePath + '/mirchecker'}
+                                            className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {basePath + '/mirchecker' || 'No results available'}
                                         </a>
                                     </div>
                                 </div>
