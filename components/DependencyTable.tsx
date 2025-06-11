@@ -8,7 +8,6 @@ interface DependencyItem {
     crate_name: string;
     version: string;
     relation: string;
-    license: string;
     dependencies: number;
 }
 
@@ -48,8 +47,7 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
     const filteredData = data?.filter(item =>
         item.crate_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.version.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.relation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.license && item.license.toLowerCase().includes(searchQuery.toLowerCase()))
+        item.relation.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
     // 排序数据
@@ -198,9 +196,6 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
                             </button>
                         </div>
                         <div className="py-3 px-4 text-left text-[#333333] font-['HarmonyOS_Sans_SC'] text-lg font-bold capitalize flex-1 flex items-center">
-                            License
-                        </div>
-                        <div className="py-3 px-4 text-left text-[#333333] font-['HarmonyOS_Sans_SC'] text-lg font-bold capitalize flex-1 flex items-center">
                             Dependencies
                             <button
                                 onClick={() => handleSort('dependencies')}
@@ -232,7 +227,7 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
                             >
                                 <div className="px-4 flex-1">
                                     <Link
-                                        href={`/${params.nsfront}/${params.nsbehind}/${item.crate_name}/${item.version}`}
+                                        href={`/${params.nsfront}/${item.crate_name}/${item.crate_name}/${item.version}`}
                                         className="text-[#333333] group-hover:text-white font-['HarmonyOS_Sans_SC'] text-base font-normal hover:underline"
                                     >
                                         {item.crate_name}
@@ -240,7 +235,6 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
                                 </div>
                                 <div className="px-4 flex-1 text-[#333333] group-hover:text-white font-['HarmonyOS_Sans_SC'] text-base font-normal">{item.version}</div>
                                 <div className="px-4 flex-1 text-[#333333] group-hover:text-white font-['HarmonyOS_Sans_SC'] text-base font-normal">{item.relation}</div>
-                                <div className="px-4 flex-1 text-[#333333] group-hover:text-white font-['HarmonyOS_Sans_SC'] text-base font-normal">{item.license || '-'}</div>
                                 <div className="px-4 flex-1 text-[#333333] group-hover:text-white font-['HarmonyOS_Sans_SC'] text-base font-normal">{item.dependencies}</div>
                             </div>
                         ))

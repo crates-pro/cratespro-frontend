@@ -198,7 +198,7 @@ const DependentTable: React.FC<DependentTableProps> = ({ data }) => {
                             >
                                 <div className="px-4 flex-1">
                                     <Link
-                                        href={`/${params.nsfront}/${params.nsbehind}/${item.crate_name}/${item.version}`}
+                                        href={`/${params.nsfront}/${item.crate_name}/${item.crate_name}/${item.version}`}
                                         className="text-[#333333] group-hover:text-white font-['HarmonyOS_Sans_SC'] text-base font-normal hover:underline"
                                     >
                                         {item.crate_name}
