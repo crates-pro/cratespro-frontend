@@ -37,14 +37,14 @@ export default function SignInButton() {
     const handleGitHubSignIn = async () => {
         try {
             // 先启用代理
-            await fetch('/api/auth/enable-proxy', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            // await fetch('/api/auth/enable-proxy', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            // });
 
-            console.log('已启用代理用于 GitHub 登录');
+            // console.log('已启用代理用于 GitHub 登录');
 
             // 然后进行 GitHub 登录
             await signIn("github");
