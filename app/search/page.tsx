@@ -161,7 +161,7 @@ const Search = () => {
                                         hover:shadow-[0_0_12px_0_rgba(43,88,221,0.2)]
                                     `}
                                 >
-                                    <Link href={`/${item.nsfront}/${item.nsbehind}/${item.name}/${item.version}`} className="block h-full">
+                                    <Link href={`/${item.nsfront}/${item.nsbehind}/${item.name}/all`} className="block h-full">
                                         <div className="p-6 h-full flex flex-col justify-center">
                                             <div className="text-sm text-gray-600 mb-1">NuGet</div>
                                             <div className="text-blue-500 font-medium text-lg">{item.name}</div>

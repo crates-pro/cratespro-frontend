@@ -17,7 +17,6 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
     const router = useRouter();
     const basePath = `/${nsfront}/${nsbehind}/${name}/${version}`;
     const [isOpen, setIsOpen] = useState(false);
-    const [currentVersion, setCurrentVersion] = useState(version);
     const [searchTerm, setSearchTerm] = useState('');
     const { crateData, setCrateData } = useHeaderContext();
 
@@ -82,7 +81,7 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
                                     onClick={toggleDropdown}
                                     className="flex items-center justify-between w-[150px] h-[36px] flex-shrink-0 rounded-[18.5px] border border-[#333333] bg-white px-4"
                                 >
-                                    <span>{currentVersion || 'Select Version'}</span>
+                                    <span>{version}</span>
                                     <Image
                                         src={isOpen ? "/images/homepage/verison-up.png" : "/images/homepage/version-down.png"}
                                         alt="version"
@@ -103,17 +102,27 @@ const CrateNav: React.FC<CrateNavProps> = ({ nsfront, nsbehind, name, version })
                                                 />
                                             </div>
                                             <ul className="max-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&:hover::-webkit-scrollbar]:block [&:hover::-webkit-scrollbar]:w-1 [&:hover::-webkit-scrollbar-thumb]:bg-gray-300 [&:hover::-webkit-scrollbar-track]:bg-transparent">
+                                                <Link
+                                                    onClick={() => {
+                                                        setSearchTerm('');
+                                                        closeDropdown();
+                                                    }}
+                                                    href={`/${nsfront}/${nsbehind}/${name}/all`}
+                                                >
+                                                    <li className="px-4 py-2 hover:bg-[#E2E9FF] cursor-pointer">
+                                                        all
+                                                    </li>
+                                                </Link>
                                                 {crateData.results?.versions
                                                     .filter(version => version.toLowerCase().includes(searchTerm.toLowerCase()))
                                                     .map((version, index) => (
                                                         <Link
                                                             key={index}
                                                             onClick={() => {
-                                                                setCurrentVersion(version);
                                                                 setSearchTerm('');
                                                                 closeDropdown();
                                                             }}
-                                                            href={`/${nsfront}/${nsbehind}/${crateData.results?.crate_name}/${version}`}
+                                                            href={`/${nsfront}/${nsbehind}/${name}/${version}`}
                                                         >
                                                             <li className="px-4 py-2 hover:bg-[#E2E9FF] cursor-pointer">
                                                                 {version}
