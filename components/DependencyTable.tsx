@@ -147,8 +147,10 @@ const DependencyTable: React.FC<DependencyTableProps> = ({ data }) => {
                     </div>
                 </div>
                 <Link
-                    href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies/graph`}
-                    className="w-[163px] h-[42px] flex-shrink-0 rounded-[21px] bg-[#4B68FF] shadow-[0_0_12px_0_#2b58dd17] text-white flex items-center justify-center hover:bg-[#3a57f0] transition-colors"
+                    href={params.version === 'all' ? '#' : `/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/dependencies/graph`}
+                    className={`w-[163px] h-[42px] flex-shrink-0 rounded-[21px] shadow-[0_0_12px_0_#2b58dd17] text-white flex items-center justify-center transition-colors ${params.version === 'all' ? 'bg-gray-300' : 'bg-[#4B68FF] hover:bg-[#3a57f0]'}`}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    {...(params.version === 'all' ? { tabIndex: -1, 'aria-disabled': true, onClick: (e) => e.preventDefault() } : {})}
                 >
                     <span className="font-['HarmonyOS_Sans_SC'] text-lg font-bold capitalize">Show Graph</span>
                 </Link>

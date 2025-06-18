@@ -61,11 +61,11 @@ const DependencyGraph: React.FC = () => {
         svg.append('defs').append('marker')
             .attr('id', 'arrowhead')
             .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 8)
+            .attr('refX', 12)
             .attr('refY', 0)
             .attr('orient', 'auto')
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
+            .attr('markerWidth', 8)
+            .attr('markerHeight', 8)
             .append('path')
             .attr('d', 'M 0,-5 L 10,0 L 0,5')
             .attr('fill', '#333')
@@ -73,13 +73,13 @@ const DependencyGraph: React.FC = () => {
 
         const nodesMap = new Map<string, DependencyNode>();
         const links: DependencyLink[] = [];
-
+        // 根据cve_count设置节点颜色
         function processDependencies(dep: GraphDependency, parent?: DependencyNode) {
             const nodeId = `${dep.name_and_version}`;
             let node = nodesMap.get(nodeId);
             if (!node) {
                 const getColorByCveCount = (count: number) => {
-                    if (count === 0) return '#2ecc71';  // 绿色
+                    if (count === 0) return '#808080';  // 灰色
                     if (count >= 10) return '#8b0000';  // 深红色
                     if (count >= 6) return '#e74c3c';   // 红色
                     if (count >= 3) return '#e67e22';   // 橙色
@@ -108,10 +108,10 @@ const DependencyGraph: React.FC = () => {
         const nodes = Array.from(nodesMap.values());
 
         const simulation = d3.forceSimulation<DependencyNode>(nodes)
-            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(80))
-            .force('charge', d3.forceManyBody().strength(-300))
+            .force('link', d3.forceLink<DependencyNode, DependencyLink>(links).id(d => d.id).distance(150))
+            .force('charge', d3.forceManyBody().strength(-500))
             .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('collide', d3.forceCollide().radius(15));
+            .force('collide', d3.forceCollide().radius(30));
 
         const g = svg.append('g');
 
@@ -119,7 +119,7 @@ const DependencyGraph: React.FC = () => {
             .selectAll('line')
             .data(links)
             .enter().append('line')
-            .attr('stroke-width', 1.5)
+            .attr('stroke-width', 2)
             .attr('stroke', '#333')
             .attr('marker-end', 'url(#arrowhead)')
             .attr('x2', function (d) {
@@ -139,10 +139,10 @@ const DependencyGraph: React.FC = () => {
             .selectAll('circle')
             .data(nodes)
             .enter().append('circle')
-            .attr('r', 8)
+            .attr('r', 15)
             .attr('fill', d => d.color)
             .attr('stroke', '#333')
-            .attr('stroke-width', 1.5)
+            .attr('stroke-width', 2)
             .call(d3.drag<SVGCircleElement, DependencyNode>()
                 .on('start', dragstarted)
                 .on('drag', dragged)
@@ -157,9 +157,11 @@ const DependencyGraph: React.FC = () => {
             .data(nodes)
             .enter().append('text')
             .attr('dy', '.35em')
-            .attr('x', d => d.x! + 10)
+            .attr('x', d => d.x! + 20)
             .attr('y', d => d.y!)
-            .text(d => d.id);
+            .text(d => d.id)
+            .style('font-size', '14px')
+            .style('font-weight', 'bold');
 
         simulation
             .nodes(nodes)
@@ -189,7 +191,7 @@ const DependencyGraph: React.FC = () => {
                 .attr('cy', d => d.y!);
 
             labels
-                .attr('x', d => d.x! + 10)
+                .attr('x', d => d.x! + 20)
                 .attr('y', d => d.y!);
         }
 

@@ -154,12 +154,22 @@ const CratePage = () => {
     const [error, setError] = useState<string | null>(null);
     const [packageCurrentPage, setPackageCurrentPage] = useState(1);
     const [depCurrentPage, setDepCurrentPage] = useState(1);
+    const [versions, setVersions] = useState<string[]>([]);
     const itemsPerPage = 1;
-    const basePath = `/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`;
+    const basePath = `/${params.nsfront}/${params.nsbehind}/${params.name}`;
 
     useEffect(() => {
         const fetchCrateData = async () => {
             try {
+                // 首先获取所有版本信息
+                const versionsResponse = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/all`);
+                if (!versionsResponse.ok) {
+                    throw new Error(`HTTP error! status: ${versionsResponse.status}`);
+                }
+                const versionsData = await versionsResponse.json();
+                setVersions(versionsData.versions || []);
+
+                // 获取当前URL版本的数据
                 const response = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -171,11 +181,12 @@ const CratePage = () => {
                 setError('An error occurred');
             } finally {
                 setLoading(false);
+                console.log('results', versions);
             }
         };
 
         fetchCrateData();
-    }, [params.name, params.version, params.nsfront, params.nsbehind]);
+    }, [params.name, params.nsfront, params.nsbehind]);
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>;
