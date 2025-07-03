@@ -156,7 +156,7 @@ const CratePage = () => {
     const [depCurrentPage, setDepCurrentPage] = useState(1);
     const [versions, setVersions] = useState<string[]>([]);
     const itemsPerPage = 1;
-    const basePath = `/${params.nsfront}/${params.nsbehind}/${params.name}`;
+    const basePath = `/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}`;
 
     useEffect(() => {
         const fetchCrateData = async () => {
