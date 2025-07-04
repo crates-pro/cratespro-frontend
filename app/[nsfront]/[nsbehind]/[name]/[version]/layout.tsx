@@ -15,10 +15,11 @@ export default function Layout({
     // 判断当前页面是否为SenseLeak页面
     const isSenseLeakPage = pathname.includes('/senseleak');
     const isMircheckerPage = pathname.includes('/mirchecker');
+    const isUnsafecheckerPage = pathname.includes('/unsafechecker');
     return (
         <div className="mb-0">
             {/* 仅在非SenseLeak页面显示导航栏 */}
-            {!isSenseLeakPage && !isMircheckerPage && (
+            {!isSenseLeakPage && !isMircheckerPage && !isUnsafecheckerPage && (
                 <CrateNav
                     nsfront={params.nsfront as string}
                     nsbehind={params.nsbehind as string}
