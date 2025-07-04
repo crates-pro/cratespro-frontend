@@ -613,18 +613,18 @@ const CratePage = () => {
                                         className="flex-shrink-0 rounded-[16.05px] border-[1.6px] border-[#333333]"
                                     />
                                     <h2 className="text-[18px] font-bold text-[#333333] tracking-[0.72px] font-['HarmonyOS_Sans_SC']">
-                                        Mirchecker
+                                        Unsafechecker
                                     </h2>
                                 </div>
                                 <div className="space-y-4">
                                     <div>
                                         <a
-                                            href={basePath + '/mirchecker'}
+                                            href={basePath + '/unsafechecker'}
                                             className="text-[#4B68FF] text-[14px] font-['HarmonyOS_Sans_SC'] font-normal hover:underline break-all"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            {basePath + '/mirchecker' || 'No results available'}
+                                            {basePath + '/unsafechecker' || 'No results available'}
                                         </a>
                                     </div>
                                 </div>

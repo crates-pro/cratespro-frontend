@@ -39,7 +39,7 @@ const MircheckerPage = () => {
                 setVersionsList(versionsData.versions || []);
 
                 // 获取 Mirchecker 数据
-                const mircheckerResponse = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/mirchecker`);
+                const mircheckerResponse = await fetch(`/api/crates/${params.nsfront}/${params.nsbehind}/${params.name}/${params.version}/unsafechecker`);
                 if (!mircheckerResponse.ok) {
                     throw new Error(`HTTP error! status: ${mircheckerResponse.status}`);
                 }
@@ -177,7 +177,7 @@ const MircheckerPage = () => {
                             {filteredVersions.map((version, index) => (
                                 <Link
                                     key={index}
-                                    href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${version}/mirchecker`}
+                                    href={`/${params.nsfront}/${params.nsbehind}/${params.name}/${version}/unsafechecker`}
                                 >
                                     <div className={`transition-colors cursor-pointer ${version === currentVersion
                                         ? 'bg-[#4b68ff] w-[278px] h-[37px] flex items-center text-white rounded-l-full rounded-r-none'
@@ -214,7 +214,7 @@ const MircheckerPage = () => {
                     <div className="mb-6 flex items-center gap-3">
                         <div className="w-[4px] h-[24px] flex-shrink-0 rounded-[2px] bg-[#4B68FF]"></div>
                         <h1 className="text-[24px] font-bold text-[#333333] tracking-[0.96px] font-['HarmonyOS_Sans_SC']">
-                            Mirchecker Analysis: {params.name}/{params.version}
+                            Unsafechecker Analysis: {params.name}/{params.version}
                         </h1>
                     </div>
 

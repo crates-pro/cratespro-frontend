@@ -226,9 +226,71 @@ const SenseLeakPage = () => {
                     <div className="bg-white rounded-2xl p-6 shadow-[0_0_12px_0_rgba(43,88,221,0.09)]">
                         {senseLeakData ? (
                             senseLeakData.exist ? (
-                                <pre className="whitespace-pre-wrap font-['HarmonyOS_Sans_SC'] text-[14px] leading-relaxed text-[#333333] p-4 bg-[#F8F9FC] rounded-lg overflow-x-auto">
-                                    {senseLeakData.res}
-                                </pre>
+                                (() => {
+                                    interface SenseLeakItem {
+                                        file: string;
+                                        line_number: number;
+                                        line: string;
+                                        rule: string;
+                                        commit_message: string;
+                                        author: string;
+                                        email: string;
+                                        commit: string;
+                                        date: string;
+                                    }
+                                    let items: SenseLeakItem[] = [];
+                                    try {
+                                        items = JSON.parse(senseLeakData.res);
+                                    } catch {
+                                        return <div className="text-red-500">SenseLeak 数据解析失败</div>;
+                                    }
+                                    if (!Array.isArray(items) || items.length === 0) {
+                                        return <div className="text-gray-400">无泄漏数据</div>;
+                                    }
+                                    return (
+                                        <div className="space-y-6">
+                                            {items.map((item, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="bg-[#F5F7FF] rounded-xl p-6 shadow border border-[#E0E7FF] flex flex-col gap-2"
+                                                >
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">File:</span>
+                                                        <span className="text-[#333]">{item.file}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Line Number:</span>
+                                                        <span className="text-[#333]">{item.line_number}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Offender:</span>
+                                                        <span className="text-[#333]">{item.line}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Rule:</span>
+                                                        <span className="text-[#333]">{item.rule}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Commit Message:</span>
+                                                        <span className="text-[#333]">{item.commit_message}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Author:</span>
+                                                        <span className="text-[#333]">{item.author} ({item.email})</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Commit Hash:</span>
+                                                        <span className="text-[#333]">{item.commit}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-bold text-[#4B68FF]">Date:</span>
+                                                        <span className="text-[#333]">{item.date}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    );
+                                })()
                             ) : (
                                 <div className="flex flex-col items-center p-8">
                                     <Image
